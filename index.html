@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dosel Studio — Vox Humana</title>
+  <meta name="description" content="Dosel Studio cria localização cultural, dublagem e TTS com direção humana, inteligência artificial e acabamento de áudio profissional. Vox Humana." />
+  <link rel="icon" type="image/png" href="assets/dosel-logo_v3.png" />
+  <link rel="apple-touch-icon" href="assets/dosel-logo_v3.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=Geist+Mono:wght@300;400&amp;display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand:      #e8e0d0;
+      --sand-mid:  #d4c9b4;
+      --sand-deep: #bfb49e;
+      --cream:     #f2ece0;
+      --parchment: #ede5d4;
+      --ink:       #1a1714;
+      --ink-mid:   #2e2a25;
+      --ink-soft:  rgba(26,23,20,0.82);
+      --ink-muted: rgba(26,23,20,0.70);
+      --accent:    #684a2f;
+      --accent-warm: #9b7a50;
+      --line:      rgba(26,23,20,0.20);
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans:  ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono:  'Geist Mono', 'Courier New', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 1.65;
+      letter-spacing: 0;
+      cursor: none;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ── Grain / noise texture overlay ─────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9990;
+      opacity: 1;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+    }
+
+    /* Sandy vignette on top of grain to give warm tonal depth */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9989;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 50%, transparent 30%, rgba(180,158,120,0.08) 100%),
+        radial-gradient(ellipse 100% 100% at 0% 0%, rgba(200,175,130,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 100% 100% at 100% 100%, rgba(160,135,95,0.07) 0%, transparent 60%);
+    }
+
+    /* ── Custom cursor ──────────────────────────────────────── */
+    #cursor {
+      position: fixed;
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s ease;
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 32px; height: 32px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s;
+      opacity: 0.55;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 48px;
+      background: rgba(242,236,224,0.92);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 10px 34px rgba(50,42,30,0.06);
+      backdrop-filter: blur(14px);
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .logo-mark img {
+      width: 72px; height: 80px;
+      display: block;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+      opacity: 0.9;
+    }
+
+    .logo-type {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .logo-type .name {
+      font-family: var(--font-serif);
+      font-weight: 400;
+      font-size: 18px;
+      letter-spacing: 0.18em;
+      color: var(--ink);
+      text-transform: uppercase;
+    }
+    .logo-type .tagline-sm {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+    nav a {
+      font-family: var(--font-mono);
+      color: var(--ink-muted);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.11em;
+      font-weight: 400;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    nav a:hover { color: var(--ink); }
+
+    .lang-switcher {
+      display: flex;
+      gap: 12px;
+      margin-left: 20px;
+      padding-left: 20px;
+      border-left: 1px solid var(--line);
+    }
+    .lang-switcher a { font-size: 11px; letter-spacing: 0.12em; }
+    .lang-switcher a.active { color: var(--accent); }
+
+    /* ── Hero ───────────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 640px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 48px 72px;
+      overflow: hidden;
+      background: var(--cream);
+    }
+
+    /* Linen/canvas texture block behind hero */
+    #hero-texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(26,23,20,0.012) 2px,
+          rgba(26,23,20,0.012) 3px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 3px,
+          rgba(26,23,20,0.009) 3px,
+          rgba(26,23,20,0.009) 4px
+        );
+      pointer-events: none;
+    }
+
+    #hero-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      opacity: 0.27;
+      mix-blend-mode: multiply;
+    }
+
+    #hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: radial-gradient(ellipse at 50% 65%, transparent 18%, rgba(242,236,224,0.46) 84%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      max-width: 900px;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      opacity: 1;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-weight: 400;
+      font-size: clamp(52px, 8vw, 110px);
+      line-height: 0.92;
+      letter-spacing: 0;
+      color: var(--ink);
+      opacity: 1;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      opacity: 1;
+    }
+
+    .hero-descriptor {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.09em;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      line-height: 1.85;
+    }
+    .hero-descriptor span { display: block; }
+
+    .hero-divider {
+      width: 1px;
+      height: 56px;
+      background: var(--line);
+      flex-shrink: 0;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.11em;
+      font-weight: 400;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+      padding: 14px 24px;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .hero-cta:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-cta svg { width: 14px; height: 14px; }
+
+    .hero-copy {
+      max-width: 620px;
+      margin-top: 22px;
+      font-size: clamp(18px, 1.7vw, 22px);
+      line-height: 1.5;
+      letter-spacing: 0;
+      color: var(--ink-soft);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 28px;
+      right: 48px;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeIn 1s 1.5s forwards;
+    }
+    .scroll-hint::before {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 48px;
+      background: var(--ink-soft);
+      animation: lineGrow 1.5s 1.5s ease-in-out infinite alternate;
+    }
+    @keyframes lineGrow { from { transform: scaleY(0.3); } to { transform: scaleY(1); } }
+
+    /* ── Shared section styles ──────────────────────────────── */
+    section {
+      padding: 120px 48px;
+      border-top: 1px solid var(--line);
+      position: relative;
+    }
+
+    /* Alternating background tones for depth */
+    section:nth-child(even) { background: var(--parchment); }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      font-weight: 400;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 60px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .product-label {
+      width: fit-content;
+      padding: 10px 14px;
+      border: 1px solid rgba(26,23,20,0.58);
+      background: var(--ink);
+      color: var(--cream);
+      box-shadow: 0 12px 30px rgba(26,23,20,0.14);
+      margin-bottom: 34px;
+    }
+    .product-label::before {
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--cream);
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    /* ── Pipeline ──────────────────────────────────────────── */
+    #pipeline {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 72px;
+      align-items: start;
+    }
+
+    .pipeline-kicker {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .pipeline-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(34px, 4vw, 58px);
+      font-weight: 400;
+      line-height: 1.04;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+    .pipeline-heading em { font-style: italic; color: var(--accent); }
+
+    .pipeline-text {
+      max-width: 560px;
+      font-size: 18px;
+      line-height: 1.62;
+      color: var(--ink-soft);
+    }
+
+    .pipeline-proof {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-top: 34px;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .proof-cell {
+      background: rgba(255,255,255,0.45);
+      padding: 18px;
+    }
+
+    .proof-value {
+      font-family: var(--font-serif);
+      font-size: 30px;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .proof-label {
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.55;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+    }
+
+    .flow {
+      border-top: 1px solid var(--line);
+    }
+
+    .flow-step {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 26px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .flow-number {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.10em;
+      color: var(--accent);
+      padding-top: 6px;
+    }
+
+    .flow-title {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.12;
+      margin-bottom: 10px;
+    }
+
+    .flow-desc {
+      max-width: 620px;
+      font-size: 16px;
+      line-height: 1.68;
+      letter-spacing: 0;
+      color: var(--ink-soft);
+    }
+
+    .flow-tag {
+      display: inline-flex;
+      margin-top: 14px;
+      padding: 6px 10px;
+      border: 1px solid rgba(122,96,64,0.28);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.26);
+    }
+
+    /* ── Ecosystem / brand wall ────────────────────────────── */
+    #ecosystem {
+      background: var(--cream);
+    }
+
+    .ecosystem-head {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 72px;
+      align-items: end;
+      margin-bottom: 56px;
+    }
+
+    .ecosystem-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 3.4vw, 48px);
+      font-weight: 400;
+      line-height: 1.12;
+      color: var(--ink);
+    }
+    .ecosystem-heading em { font-style: italic; color: var(--accent); }
+
+    .ecosystem-text {
+      font-size: 18px;
+      line-height: 1.62;
+      color: var(--ink-soft);
+      max-width: 680px;
+    }
+
+    .brand-group + .brand-group { margin-top: 38px; }
+
+    .brand-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .brand-wall {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .brand-logo {
+      min-height: 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 12px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      color: rgba(26,23,20,0.70);
+      font-family: var(--font-serif);
+      font-size: 20px;
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+      text-align: center;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.2);
+    }
+
+    .brand-logo img {
+      max-width: 132px;
+      max-height: 28px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      filter: grayscale(1);
+      opacity: 0.7;
+      mix-blend-mode: multiply;
+      transition: opacity 0.25s;
+    }
+
+    .brand-logo:hover img { opacity: 0.9; }
+
+    .brand-logo span {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.2;
+      letter-spacing: 0.06em;
+      color: rgba(26,23,20,0.72);
+    }
+
+    .brand-logo.small {
+      font-size: 15px;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── About ──────────────────────────────────────────────── */
+    #about {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 80px;
+      align-items: start;
+    }
+
+    .about-statement {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 400;
+      line-height: 1.25;
+      letter-spacing: 0;
+      color: var(--ink);
+    }
+    .about-statement em { font-style: italic; color: var(--accent); }
+
+    .about-right { padding-top: 8px; }
+
+    .about-text {
+      font-size: 18px;
+      line-height: 1.62;
+      color: var(--ink-soft);
+      max-width: 560px;
+      margin-bottom: 40px;
+    }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .pillar {
+      border: 1px solid var(--line);
+      padding: 22px;
+      transition: border-color 0.3s, background 0.3s;
+      background: rgba(255,255,255,0.3);
+    }
+    .pillar:hover { border-color: var(--accent-warm); background: rgba(255,255,255,0.55); }
+
+    .pillar-icon {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.10em;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .pillar-name {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 400;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+    .pillar-desc {
+      font-size: 15px;
+      color: var(--ink-soft);
+      line-height: 1.62;
+      letter-spacing: 0;
+    }
+
+    /* ── Services ───────────────────────────────────────────── */
+    #services {}
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .service-item {
+      border-right: 1px solid var(--line);
+      padding: 40px 32px;
+      transition: background 0.3s;
+      cursor: default;
+    }
+    .service-item:last-child { border-right: none; }
+    .service-item:hover { background: rgba(255,255,255,0.45); }
+
+    .service-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink-muted);
+      letter-spacing: 0.09em;
+      margin-bottom: 28px;
+    }
+
+    .service-title {
+      font-family: var(--font-serif);
+      font-size: 27px;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      color: var(--ink);
+    }
+    .service-desc {
+      font-size: 15px;
+      color: var(--ink-soft);
+      line-height: 1.62;
+      letter-spacing: 0;
+    }
+
+    /* ── Environment ────────────────────────────────────────── */
+    #environment {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 80px;
+      align-items: center;
+    }
+
+    .env-visual {
+      position: relative;
+      aspect-ratio: 4/3;
+      background: var(--sand);
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    #env-svg {
+      width: 100%;
+      height: 100%;
+      opacity: 0.7;
+    }
+
+    .env-badge {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.09em;
+      color: var(--accent);
+      text-transform: uppercase;
+      border: 1px solid var(--accent);
+      padding: 8px 14px;
+      background: rgba(232,224,208,0.7);
+    }
+
+    .env-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 3vw, 42px);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 24px;
+      color: var(--ink);
+    }
+    .env-heading em { font-style: italic; color: var(--accent); }
+
+    .env-text {
+      font-size: 18px;
+      color: var(--ink-soft);
+      line-height: 1.62;
+      margin-bottom: 36px;
+    }
+
+    .env-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+    .env-stat { padding: 20px; background: var(--parchment); }
+    .env-stat-num {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .env-stat-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    /* ── Contact ────────────────────────────────────────────── */
+    #contact {
+      text-align: center;
+      padding: 140px 48px;
+      background: var(--sand-mid);
+    }
+
+    .contact-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(44px, 7vw, 96px);
+      font-weight: 400;
+      line-height: 0.95;
+      margin-bottom: 40px;
+      color: var(--ink);
+    }
+    .contact-heading em { font-style: italic; color: var(--accent); }
+
+    .contact-sub {
+      font-size: 18px;
+      color: var(--ink-soft);
+      letter-spacing: 0;
+      margin-bottom: 52px;
+      line-height: 1.62;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.09em;
+      font-weight: 400;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 16px 32px;
+      border: 1px solid;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      color: var(--cream);
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .btn-primary:hover {
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+    .btn-ghost {
+      color: var(--ink);
+      background: transparent;
+      border-color: var(--line);
+    }
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── Footer ─────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 32px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--sand-deep);
+    }
+
+    .footer-left {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-muted);
+      letter-spacing: 0.07em;
+    }
+    .footer-right { display: flex; gap: 24px; }
+    .footer-right a {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.07em;
+      color: var(--ink-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-right a:hover { color: var(--accent); }
+
+    /* ── Animations ─────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      header { padding: 22px 28px; }
+      nav { gap: 20px; }
+      #hero { padding: 0 28px 56px; }
+      section { padding: 80px 28px; }
+      #pipeline,
+      .ecosystem-head {
+        grid-template-columns: 1fr;
+        gap: 44px;
+      }
+      .brand-wall { grid-template-columns: repeat(3, 1fr); }
+      #about { grid-template-columns: 1fr; gap: 48px; }
+      .about-text { max-width: 100%; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .service-item:nth-child(2) { border-right: none; }
+      .service-item { border-bottom: 1px solid var(--line); }
+      .service-item:nth-last-child(-n+2) { border-bottom: none; }
+      #environment { grid-template-columns: 1fr; gap: 48px; }
+      #contact { padding: 100px 28px; }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 18px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        width: 100%;
+      }
+      nav a { font-size: 11px; }
+      .lang-switcher {
+        gap: 9px;
+        margin-left: 0;
+        padding-left: 0;
+        border-left: none;
+        flex-basis: 100%;
+      }
+      .logo-type .name { font-size: 15px; }
+      #hero { padding: 0 20px 48px; }
+      .hero-content {
+        max-width: 100%;
+        min-width: 0;
+      }
+      .hero-copy {
+        max-width: 34ch;
+        overflow-wrap: break-word;
+      }
+      .hero-sub {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 22px;
+      }
+      .hero-divider { display: none; }
+      .hero-cta { padding: 13px 18px; }
+      section { padding: 60px 20px; }
+      .pipeline-proof { grid-template-columns: 1fr; }
+      .flow-step {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 26px 0;
+      }
+      .flow-title { font-size: 24px; }
+      .brand-wall { grid-template-columns: 1fr 1fr; }
+      .brand-logo {
+        min-height: 62px;
+        font-size: 16px;
+      }
+      .brand-logo span { font-size: 11px; letter-spacing: 0.06em; }
+      .brand-logo.small { font-size: 14px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .service-item { border-right: none; border-bottom: 1px solid var(--line); }
+      .service-item:last-child { border-bottom: none; }
+      .pillars { grid-template-columns: 1fr; }
+      .env-stats { grid-template-columns: 1fr; }
+      .contact-links { flex-direction: column; align-items: center; }
+      footer { padding: 24px 20px; }
+    }
+
+    @media (pointer: coarse) {
+      body { cursor: auto; }
+      #cursor, #cursor-ring { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <header>
+    <a href="#" class="logo-wrap">
+      <div class="logo-mark">
+        <img src="assets/dosel-logo_v3.png" alt="Dosel Studio" />
+      </div>
+      <div class="logo-type">
+        <span class="name">Dosel Studio</span>
+        <span class="tagline-sm">Vox Humana</span>
+      </div>
+    </a>
+
+    <nav>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#ecosystem">Stack</a>
+      <a href="#services">Serviços</a>
+      <a href="#environment">Estúdio</a>
+      <a href="#contact">Contato</a>
+      <div class="lang-switcher">
+        <a href="index_eng.html">EN</a>
+        <a href="index.html" class="active">PT</a>
+        <a href="#">中文</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ── Hero ───────────────────────────────────────────────── -->
+  <section id="hero">
+    <div id="hero-texture"></div>
+    <canvas id="hero-canvas"></canvas>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Dosel Studio · Vox Humana</p>
+      <h1 class="hero-title">
+        Localização<br />
+        cultural com<br />
+        <em>voz humana</em>.
+      </h1>
+      <p class="hero-copy">
+        Expanda seu conteúdo para milhões de pessoas que falam português com vozes em IA que soam naturais, passam por direção humana e finalização em estúdio analógico.
+      </p>
+      <div class="hero-sub">
+        <p class="hero-descriptor">
+          <span>Human-in-the-loop</span>
+          <span>TTS (Text-To-Speech / Texto-Para-Voz) de Estado da Arte</span>
+          <span>Localização Cultural</span>
+          <span>Do briefing ao arquivo final</span>
+        </p>
+        <div class="hero-divider"></div>
+        <a href="#pipeline" class="hero-cta">
+          Ver Pipeline
+          <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="scroll-hint">Role</div>
+  </section>
+
+  <!-- ── Pipeline ──────────────────────────────────────────── -->
+  <section id="pipeline">
+    <div class="pipeline-left">
+      <div class="section-label product-label reveal">Vox-Humana 1.0</div>
+      <div class="pipeline-kicker reveal">Localização cultural + TTS</div>
+      <h2 class="pipeline-heading reveal">
+        Um fluxo claro para<br />
+        fazer sua marca <em>soar local</em>.
+      </h2>
+      <p class="pipeline-text reveal">
+        A Dosel combina curadoria humana, modelos de voz e pós-produção profissional para transformar conteúdo técnico, institucional ou criativo em uma versão que fala com naturalidade, contexto e intenção.
+      </p>
+      <div class="pipeline-proof reveal">
+        <div class="proof-cell">
+          <div class="proof-value">01</div>
+          <div class="proof-label">Sentido antes da tradução</div>
+        </div>
+        <div class="proof-cell">
+          <div class="proof-value">02</div>
+          <div class="proof-label">Voz dirigida por humanos</div>
+        </div>
+        <div class="proof-cell">
+          <div class="proof-value">03</div>
+          <div class="proof-label">Entrega pronta para publicar</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step reveal">
+        <div class="flow-number">01</div>
+        <div>
+          <h3 class="flow-title">Entendemos o universo da marca.</h3>
+          <p class="flow-desc">Antes de falar em voz ou tecnologia, mapeamos público, tom, jargões, referências culturais, nomes próprios, termos sensíveis e o que não pode se perder na adaptação.</p>
+          <span class="flow-tag">Briefing cultural</span>
+        </div>
+      </div>
+      <div class="flow-step reveal">
+        <div class="flow-number">02</div>
+        <div>
+          <h3 class="flow-title">Adaptamos o texto para soar nativo.</h3>
+          <p class="flow-desc">A tradução vira localização: clareza, ritmo, naturalidade e intenção. O texto é preparado para voz, não apenas para leitura.</p>
+          <span class="flow-tag">Roteiro localizado</span>
+        </div>
+      </div>
+      <div class="flow-step reveal">
+        <div class="flow-number">03</div>
+        <div>
+          <h3 class="flow-title">Criamos vozes com IA e direção humana.</h3>
+          <p class="flow-desc">Selecionamos ou desenhamos o perfil vocal, geramos as falas em TTS e dirigimos performance, pronúncia, pausas e intenção até a voz deixar de parecer genérica.</p>
+          <span class="flow-tag">TTS human-in-the-loop</span>
+        </div>
+      </div>
+      <div class="flow-step reveal">
+        <div class="flow-number">04</div>
+        <div>
+          <h3 class="flow-title">Tratamos em estúdio profissional.</h3>
+          <p class="flow-desc">Depois do TTS, o material passa por profissionais de áudio: edição, tratamento de voz, mixagem e processamento em equipamentos analógicos únicos para ganhar presença, profundidade e acabamento real de estúdio.</p>
+          <span class="flow-tag">Cadeia analógica + QA humano</span>
+        </div>
+      </div>
+      <div class="flow-step reveal">
+        <div class="flow-number">05</div>
+        <div>
+          <h3 class="flow-title">Entregamos pronto para escala.</h3>
+          <p class="flow-desc">Você recebe vídeo dublado, áudio separado e legendas quando necessário. Um processo simples para o cliente, robusto por trás.</p>
+          <span class="flow-tag">Publicação global</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Ecosystem ─────────────────────────────────────────── -->
+  <section id="ecosystem">
+    <div class="section-label reveal">Ecossistema</div>
+    <div class="ecosystem-head">
+      <h2 class="ecosystem-heading reveal">
+        Tecnologia de ponta.<br />
+        Áudio de <em>referência</em>.
+      </h2>
+      <p class="ecosystem-text reveal">
+        Trabalhamos com tecnologias, plataformas, equipamentos e instrumentos de empresas que definem padrões em IA, nuvem, áudio profissional e criação sonora.
+      </p>
+    </div>
+
+    <div class="brand-group reveal">
+      <div class="brand-label">Tecnologia, IA e infraestrutura</div>
+      <div class="brand-wall" aria-label="Marcas de tecnologia no ecossistema Dosel">
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/nvidia/8f8b83" alt="NVIDIA" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>NVIDIA</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/anthropic/8f8b83" alt="Anthropic" onerror="this.src='https://www.google.com/s2/favicons?domain=anthropic.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Anthropic</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/openai/8f8b83" alt="OpenAI" onerror="this.src='https://www.google.com/s2/favicons?domain=openai.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>OpenAI</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/ibm/8f8b83" alt="IBM" onerror="this.src='https://www.google.com/s2/favicons?domain=ibm.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>IBM</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/dell/8f8b83" alt="Dell" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Dell</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/microsoft/8f8b83" alt="Microsoft" onerror="this.src='https://www.google.com/s2/favicons?domain=microsoft.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Microsoft</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/cloudflare/8f8b83" alt="Cloudflare" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Cloudflare</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/amazonwebservices/8f8b83" alt="AWS" onerror="this.src='https://www.google.com/s2/favicons?domain=aws.amazon.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>AWS</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/alibabacloud/8f8b83" alt="Alibaba Cloud" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Alibaba Cloud</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/cisco/8f8b83" alt="Cisco" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Cisco</span></div>
+      </div>
+    </div>
+
+    <div class="brand-group reveal">
+      <div class="brand-label">Áudio, estúdio e instrumentos</div>
+      <div class="brand-wall" aria-label="Marcas de áudio no ecossistema Dosel">
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=genelec.com&amp;sz=128" alt="Genelec" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Genelec</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=focusrite.com&amp;sz=128" alt="Focusrite" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Focusrite</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=uaudio.com&amp;sz=128" alt="Universal Audio" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Universal Audio</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=thermionicculture.com&amp;sz=128" alt="Thermionic Culture" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Thermionic Culture</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=neumann.com&amp;sz=128" alt="Neumann" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Neumann</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=apiaudio.com&amp;sz=128" alt="API" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>API</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=dangerousmusic.com&amp;sz=128" alt="Dangerous Audio" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Dangerous Audio</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=empiricallabs.com&amp;sz=128" alt="Empirical Labs" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Empirical Labs</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/roland/8f8b83" alt="Roland" onerror="this.src='https://www.google.com/s2/favicons?domain=roland.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Roland</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=native-instruments.com&amp;sz=128" alt="Native Instruments" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Native Instruments</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/yamaha/8f8b83" alt="Yamaha" onerror="this.src='https://www.google.com/s2/favicons?domain=yamaha.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Yamaha</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=midasconsoles.com&amp;sz=128" alt="Midas" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Midas</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/sennheiser/8f8b83" alt="Sennheiser" onerror="this.src='https://www.google.com/s2/favicons?domain=sennheiser.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Sennheiser</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/shure/8f8b83" alt="Shure" onerror="this.src='https://www.google.com/s2/favicons?domain=shure.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Shure</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=elektron.se&amp;sz=128" alt="Elektron" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Elektron</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=doepfer.de&amp;sz=128" alt="Doepfer" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Doepfer</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=sequential.com&amp;sz=128" alt="Dave Smith / Sequential" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Dave Smith</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=moogmusic.com&amp;sz=128" alt="Moog" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Moog</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=pultecaudio.com&amp;sz=128" alt="Pultec" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Pultec</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=thermionicculture.com&amp;sz=128" alt="Culture Vulture" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Culture Vulture</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── About ──────────────────────────────────────────────── -->
+  <section id="about">
+    <div class="about-left">
+      <div class="section-label reveal">Método</div>
+      <h2 class="about-statement reveal">
+        IA acelera.<br />
+        Humanos dão<br />
+        <em>sentido</em>.
+      </h2>
+    </div>
+    <div class="about-right reveal">
+      <p class="about-text">
+        A Dosel é um estúdio criativo de áudio e audiovisual focado em localização cultural com vozes geradas por IA e direção humana. Nosso diferencial está no blend: tecnologia para escalar, escuta profissional para decidir, adaptar e finalizar.
+      </p>
+      <div class="pillars">
+        <div class="pillar reveal">
+          <div class="pillar-icon">01</div>
+          <div class="pillar-name">Contexto Cultural</div>
+          <div class="pillar-desc">A versão local respeita intenção, público e repertório.</div>
+        </div>
+        <div class="pillar reveal">
+          <div class="pillar-icon">02</div>
+          <div class="pillar-name">Voz com Direção</div>
+          <div class="pillar-desc">TTS com curadoria de timbre, ritmo, pausa e pronúncia.</div>
+        </div>
+        <div class="pillar reveal">
+          <div class="pillar-icon">03</div>
+          <div class="pillar-name">QA Humano</div>
+          <div class="pillar-desc">Revisão de sentido, timing, impacto e naturalidade.</div>
+        </div>
+        <div class="pillar reveal">
+          <div class="pillar-icon">04</div>
+          <div class="pillar-name">Escala Global</div>
+          <div class="pillar-desc">Conteúdo pronto para publicar em novos mercados.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Services ───────────────────────────────────────────── -->
+  <section id="services">
+    <div class="section-label reveal">Serviços Complementares</div>
+    <div class="services-grid">
+      <div class="service-item reveal">
+        <div class="service-num">01</div>
+        <div class="service-title">Dublagem com<br />Localização</div>
+        <div class="service-desc">Pipeline completo para adaptar, gerar voz, revisar e entregar conteúdo pronto para novos mercados.</div>
+      </div>
+      <div class="service-item reveal">
+        <div class="service-num">02</div>
+        <div class="service-title">TTS sob<br />Direção Humana</div>
+        <div class="service-desc">Vozes sintéticas com intenção, pronúncia e acabamento editorial para marcas, produtos e treinamento.</div>
+      </div>
+      <div class="service-item reveal">
+        <div class="service-num">03</div>
+        <div class="service-title">Mixagem &amp;<br />Pós-Produção</div>
+        <div class="service-desc">Tratamento de voz, montagem, equilíbrio, loudness e finalização para vídeo, cursos e campanhas.</div>
+      </div>
+      <div class="service-item reveal">
+        <div class="service-num">04</div>
+        <div class="service-title">Criação<br />Sonora</div>
+        <div class="service-desc">Identidades sonoras, vinhetas, atmosferas e sistemas de áudio para marcas e experiências digitais.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Environment ────────────────────────────────────────── -->
+  <section id="environment">
+    <div class="env-visual reveal">
+      <svg id="env-svg" viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <g stroke="#7a6040" stroke-width="0.7" fill="none" opacity="0.65">
+          <ellipse cx="300" cy="225" rx="40" ry="24"/>
+          <ellipse cx="300" cy="225" rx="72" ry="44"/>
+          <ellipse cx="300" cy="225" rx="108" ry="66"/>
+          <ellipse cx="300" cy="225" rx="148" ry="90"/>
+          <ellipse cx="300" cy="225" rx="192" ry="118"/>
+          <ellipse cx="300" cy="225" rx="240" ry="148"/>
+          <ellipse cx="300" cy="225" rx="290" ry="180"/>
+          <ellipse cx="300" cy="225" rx="344" ry="214"/>
+          <ellipse cx="300" cy="225" rx="400" ry="250"/>
+          <ellipse cx="300" cy="225" rx="460" ry="288"/>
+          <ellipse cx="300" cy="225" rx="522" ry="328"/>
+        </g>
+        <g stroke="#9b7a50" stroke-width="0.9" fill="none" opacity="0.35">
+          <path d="M0 225 Q60 160 120 225 Q180 290 240 200 Q300 110 360 225 Q420 340 480 200 Q540 60 600 225"/>
+          <path d="M0 225 Q60 170 120 225 Q180 280 240 210 Q300 130 360 225 Q420 320 480 210 Q540 90 600 225" opacity="0.6"/>
+          <path d="M0 225 Q60 180 120 225 Q180 270 240 220 Q300 150 360 225 Q420 300 480 220 Q540 120 600 225" opacity="0.35"/>
+        </g>
+      </svg>
+      <div class="env-badge">Mata Atlântica · Brasil</div>
+    </div>
+
+    <div class="env-right">
+      <div class="section-label reveal">O Estúdio</div>
+      <h2 class="env-heading reveal">
+        Enraizado na<br />
+        floresta. <em>Conectado</em><br />
+        ao mundo.
+      </h2>
+      <p class="env-text reveal">
+        O estúdio nasce em um dos ecossistemas mais biodiversos do mundo. A precisão técnica vem da infraestrutura; a sensibilidade vem da escuta. É desse contraste que nasce uma localização que não parece automática.
+      </p>
+      <div class="env-stats reveal">
+        <div class="env-stat">
+          <div class="env-stat-num">TTS</div>
+          <div class="env-stat-label">Vozes sob direção</div>
+        </div>
+        <div class="env-stat">
+          <div class="env-stat-num">QA</div>
+          <div class="env-stat-label">Sentido e timing</div>
+        </div>
+        <div class="env-stat">
+          <div class="env-stat-num">24</div>
+          <div class="env-stat-label">Bit / 192kHz</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Contact ────────────────────────────────────────────── -->
+  <section id="contact">
+    <h2 class="contact-heading reveal">
+      Vamos localizar<br />
+      <em>sua voz?</em>
+    </h2>
+    <p class="contact-sub reveal">
+      Conteúdo técnico, treinamento, produto, vídeo institucional ou campanha.<br />
+      A Dosel transforma em uma versão que soa local.
+    </p>
+    <div class="contact-links reveal">
+      <a href="mailto:hello@dosel.co" class="btn btn-primary">
+        hello@dosel.co
+      </a>
+      <a href="#pipeline" class="btn btn-ghost">
+        Ver Pipeline
+      </a>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-left">
+      © 2026 Dosel Studio · Todos os direitos reservados · Mata Atlântica, Brasil
+    </div>
+    <div class="footer-right">
+      <a href="#">Instagram</a>
+      <a href="#">LinkedIn</a>
+      <a href="index_eng.html">EN</a>
+      <a href="index.html">PT</a>
+      <a href="#">中文</a>
+    </div>
+  </footer>
+
+  <script>
+    // ── Cursor ──────────────────────────────────────────────
+    const cur = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cur.style.left = mx + 'px';
+      cur.style.top  = my + 'px';
+    });
+
+    (function animRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animRing);
+    })();
+
+    // ── Hero canvas waveform (warm ink tones) ───────────────
+    const canvas = document.getElementById('hero-canvas');
+    const ctx    = canvas.getContext('2d');
+    let W, H, t  = 0;
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = canvas.offsetWidth;
+      H = canvas.offsetHeight;
+      canvas.width = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function drawWave() {
+      ctx.clearRect(0, 0, W, H);
+      const lines = 54;
+      for (let i = 0; i < lines; i++) {
+        const y0    = H * 0.15 + (H * 0.7) * (i / lines);
+        const amp   = 24 + i * 1.35;
+        const freq  = 0.005 + i * 0.00015;
+        const phase = t * 0.4 + i * 0.18;
+        const alpha = 0.14 + (i / lines) * 0.18;
+
+        ctx.beginPath();
+        for (let x = 0; x <= W; x += 2) {
+          const y = y0
+            + Math.sin(x * freq + phase) * amp
+            + Math.sin(x * freq * 2.3 - phase * 0.7) * amp * 0.4;
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        // Warm sepia/umber strokes instead of gold
+        ctx.strokeStyle = `rgba(100, 72, 38, ${alpha})`;
+        ctx.lineWidth = 1.15;
+        ctx.stroke();
+      }
+      t += 0.3;
+      requestAnimationFrame(drawWave);
+    }
+    drawWave();
+
+    // ── Scroll reveal ───────────────────────────────────────
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e, idx) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), idx * 80);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => io.observe(el));
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+# Ignorar a pasta privada solicitada
+private/
+
+# Arquivos de sistema e logs comuns
+.DS_Store
+Thumbs.db
+*.log
+venvs/
+venv/
+.env
+.DS_Store
+__pycache__/
+*.pyc
+*.log
