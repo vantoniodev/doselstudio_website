@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dosel Studio — Vox Humana</title>
   <meta name="description" content="Dosel Studio cria localização cultural, dublagem e TTS com direção humana, inteligência artificial e acabamento de áudio profissional. Vox Humana." />
-  <link rel="icon" type="image/png" href="assets/dosel-logo_v3.png" />
-  <link rel="apple-touch-icon" href="assets/dosel-logo_v3.png" />
+  <link rel="icon" href="assets/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -582,6 +583,22 @@
 
     .brand-logo:hover img { opacity: 0.9; }
 
+    .brand-logo img.logo-wide {
+      max-width: 128px;
+      max-height: 30px;
+      filter: none;
+      opacity: 0.72;
+      mix-blend-mode: normal;
+    }
+
+    .brand-logo img.logo-tall {
+      max-width: 126px;
+      max-height: 30px;
+      filter: none;
+      opacity: 0.72;
+      mix-blend-mode: normal;
+    }
+
     .brand-logo span {
       display: block;
       font-family: var(--font-mono);
@@ -589,6 +606,9 @@
       line-height: 1.2;
       letter-spacing: 0.06em;
       color: rgba(26,23,20,0.72);
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      text-transform: none;
     }
 
     .brand-logo.small {
@@ -1026,7 +1046,7 @@
       <div class="hero-sub">
         <p class="hero-descriptor">
           <span>Human-in-the-loop</span>
-          <span>TTS (Text-To-Speech / Texto-Para-Voz) de Estado da Arte</span>
+          <span>TTS (Text-To-Speech / Texto-Para-Voz) Tecnologia Estado da Arte</span>
           <span>Localização Cultural</span>
           <span>Do briefing ao arquivo final</span>
         </p>
@@ -1147,26 +1167,26 @@
     <div class="brand-group reveal">
       <div class="brand-label">Áudio, estúdio e instrumentos</div>
       <div class="brand-wall" aria-label="Marcas de áudio no ecossistema Dosel">
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=genelec.com&amp;sz=128" alt="Genelec" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Genelec</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=neumann.com&amp;sz=128" alt="Neumann GmbH" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Neumann GmbH</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=apiaudio.com&amp;sz=128" alt="Automated Processes, Inc. (API)" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Automated Processes, Inc. (API)</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=uaudio.com&amp;sz=128" alt="Universal Audio, Inc." onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Universal Audio, Inc.</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=genelec.com&amp;sz=128" alt="Genelec Oy" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Genelec Oy</span></div>
         <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=focusrite.com&amp;sz=128" alt="Focusrite" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Focusrite</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=uaudio.com&amp;sz=128" alt="Universal Audio" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Universal Audio</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=thermionicculture.com&amp;sz=128" alt="Thermionic Culture" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Thermionic Culture</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=neumann.com&amp;sz=128" alt="Neumann" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Neumann</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=apiaudio.com&amp;sz=128" alt="API" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>API</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=dangerousmusic.com&amp;sz=128" alt="Dangerous Audio" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Dangerous Audio</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=empiricallabs.com&amp;sz=128" alt="Empirical Labs" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Empirical Labs</span></div>
-        <div class="brand-logo"><img src="https://cdn.simpleicons.org/roland/8f8b83" alt="Roland" onerror="this.src='https://www.google.com/s2/favicons?domain=roland.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Roland</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=native-instruments.com&amp;sz=128" alt="Native Instruments" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Native Instruments</span></div>
-        <div class="brand-logo"><img src="https://cdn.simpleicons.org/yamaha/8f8b83" alt="Yamaha" onerror="this.src='https://www.google.com/s2/favicons?domain=yamaha.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Yamaha</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=midasconsoles.com&amp;sz=128" alt="Midas" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Midas</span></div>
-        <div class="brand-logo"><img src="https://cdn.simpleicons.org/sennheiser/8f8b83" alt="Sennheiser" onerror="this.src='https://www.google.com/s2/favicons?domain=sennheiser.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Sennheiser</span></div>
-        <div class="brand-logo"><img src="https://cdn.simpleicons.org/shure/8f8b83" alt="Shure" onerror="this.src='https://www.google.com/s2/favicons?domain=shure.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Shure</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=elektron.se&amp;sz=128" alt="Elektron" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Elektron</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=doepfer.de&amp;sz=128" alt="Doepfer" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Doepfer</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=sequential.com&amp;sz=128" alt="Dave Smith / Sequential" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Dave Smith</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=moogmusic.com&amp;sz=128" alt="Moog" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Moog</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=pultecaudio.com&amp;sz=128" alt="Pultec" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Pultec</span></div>
-        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=thermionicculture.com&amp;sz=128" alt="Culture Vulture" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Culture Vulture</span></div>
+        <div class="brand-logo"><img class="logo-tall" src="assets/thermionic_logo_mono.png" alt="Thermionic Culture Ltd." onerror="this.src='assets/thermionic_logo.png';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Thermionic Culture Ltd.</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=dangerousmusic.com&amp;sz=128" alt="Dangerous Audio, Inc." onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Dangerous Audio, Inc.</span></div>
+        <div class="brand-logo"><img src="assets/empirical_labs_logo.jpeg" alt="Empirical Labs, Inc." onerror="this.src='https://www.google.com/s2/favicons?domain=empiricallabs.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Empirical Labs, Inc.</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/sennheiser/8f8b83" alt="Sennheiser GmbH &amp; Co." onerror="this.src='https://www.google.com/s2/favicons?domain=sennheiser.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Sennheiser GmbH &amp; Co.</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/shure/8f8b83" alt="Shure Incorporated" onerror="this.src='https://www.google.com/s2/favicons?domain=shure.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Shure Incorporated</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=sequential.com&amp;sz=128" alt="Dave Smith Instruments" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Dave Smith Instruments</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=moogmusic.com&amp;sz=128" alt="Moog Music, Inc." onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Moog Music, Inc.</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=elektron.se&amp;sz=128" alt="Elektron SE (Sweden)" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Elektron SE (Sweden)</span></div>
+        <div class="brand-logo"><img src="assets/doepfer_logo.jpeg" alt="Doepfer Musikelektronik GmbH" onerror="this.src='https://www.google.com/s2/favicons?domain=www2.doepfer.eu&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Doepfer Musikelektronik GmbH</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=native-instruments.com&amp;sz=128" alt="Native Instruments GmbH" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Native Instruments GmbH</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/roland/8f8b83" alt="Roland Corporation" onerror="this.src='https://www.google.com/s2/favicons?domain=roland.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Roland Corporation</span></div>
+        <div class="brand-logo"><img src="https://cdn.simpleicons.org/yamaha/8f8b83" alt="Yamaha Corporation" onerror="this.src='https://www.google.com/s2/favicons?domain=yamaha.com&amp;sz=128';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Yamaha Corporation</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=midasconsoles.com&amp;sz=128" alt="Midas Audio" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Midas Audio</span></div>
+        <div class="brand-logo"><img src="https://www.google.com/s2/favicons?domain=intl.fender.com&amp;sz=128" alt="Fender Musical Instruments Corp." onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span>Fender Musical Instruments Corp.</span></div>
+        <div class="brand-logo"><img class="logo-wide" src="assets/pultec_logo_mono.png" alt="Pulse Techniques, Inc. (Pultec)" onerror="this.src='assets/pultec_logo.png';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};"><span>Pulse Techniques, Inc. (Pultec)</span></div>
       </div>
     </div>
   </section>
@@ -1293,8 +1313,9 @@
   <!-- ── Contact ────────────────────────────────────────────── -->
   <section id="contact">
     <h2 class="contact-heading reveal">
-      Vamos localizar<br />
-      <em>sua voz?</em>
+      Mais de 200 milhões<br />
+      de ouvintes esperam.<br />
+      <em>Fale com a gente.</em>
     </h2>
     <p class="contact-sub reveal">
       Conteúdo técnico, treinamento, produto, vídeo institucional ou campanha.<br />
