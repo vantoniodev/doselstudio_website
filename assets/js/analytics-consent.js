@@ -73,13 +73,37 @@
     } catch (_) {}
   }
 
-  function loadGa4() {
-    if (!IS_GA_CONFIGURED || window.__doselGa4Loaded) return;
-    window.__doselGa4Loaded = true;
+  function consentState(value) {
+    const granted = value === CONSENT_ACCEPTED;
+    return {
+      analytics_storage: granted ? 'granted' : 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      functionality_storage: 'granted',
+      security_storage: 'granted'
+    };
+  }
+
+  function ensureGtag() {
     window.dataLayer = window.dataLayer || [];
-    window.gtag = function () {
+    window.gtag = window.gtag || function () {
       window.dataLayer.push(arguments);
     };
+  }
+
+  function updateConsent(value) {
+    if (!IS_GA_CONFIGURED || typeof window.gtag !== 'function') return;
+    window.gtag('consent', 'update', consentState(value));
+  }
+
+  function initGa4() {
+    if (!IS_GA_CONFIGURED || window.__doselGa4Loaded) return;
+    window.__doselGa4Loaded = true;
+    ensureGtag();
+    window.gtag('consent', 'default', consentState(getConsent()), {
+      wait_for_update: 500
+    });
     window.gtag('js', new Date());
     window.gtag('config', GA_MEASUREMENT_ID, {
       send_page_view: true,
@@ -286,8 +310,8 @@
       if (!choice) return;
       const value = choice.getAttribute('data-consent-choice') === 'accept' ? CONSENT_ACCEPTED : CONSENT_REJECTED;
       setConsent(value);
+      updateConsent(value);
       if (value === CONSENT_ACCEPTED) {
-        loadGa4();
         track('analytics_consent_accept', { source: 'banner' });
       }
       removeBanner();
@@ -306,12 +330,9 @@
 
   bindEventTracking();
   revealSettingsButtons();
+  initGa4();
 
-  if (IS_GA_CONFIGURED && getConsent() === CONSENT_ACCEPTED) {
-    loadGa4();
-  } else {
-    showBanner(false);
-  }
+  showBanner(false);
 
   window.DoselAnalytics = {
     measurementId: GA_MEASUREMENT_ID,
@@ -320,7 +341,7 @@
     setConsent: function (value) {
       if (value !== CONSENT_ACCEPTED && value !== CONSENT_REJECTED) return;
       setConsent(value);
-      if (value === CONSENT_ACCEPTED) loadGa4();
+      updateConsent(value);
     },
     resetConsent: function () {
       clearConsent();
