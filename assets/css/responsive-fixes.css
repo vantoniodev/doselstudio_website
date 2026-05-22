@@ -1,0 +1,295 @@
+html {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+body {
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+img,
+video {
+  height: auto;
+}
+
+main,
+section,
+header,
+footer,
+nav,
+.hero-content,
+.legal-wrap,
+.page,
+.topbar-inner {
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+p,
+a,
+li {
+  overflow-wrap: break-word;
+}
+
+nav,
+.lang-switcher,
+.section-label,
+.contact-links,
+.universes,
+.topbar-inner,
+.nav-links {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.hero-content,
+.pipeline-left,
+.flow,
+.ecosystem-head > *,
+.about-left,
+.about-right,
+.env-right,
+.service-item,
+.pillar,
+.proof-cell,
+.brand-logo,
+footer.site-footer > *,
+.card,
+.fork-left,
+.fork-right,
+.dashboard-card,
+.chart-card,
+.metric-card {
+  min-width: 0;
+}
+
+.product-label,
+.hero-cta,
+.btn,
+.universe-pill,
+.card-tag {
+  max-width: 100%;
+}
+
+.hero-cta,
+.btn,
+.universe-pill,
+.card-tag {
+  white-space: normal;
+}
+
+#hero {
+  height: auto;
+  min-height: 640px;
+  min-height: max(640px, 100svh);
+  padding-top: calc(150px + env(safe-area-inset-top));
+}
+
+.legal-page {
+  padding-top: calc(180px + env(safe-area-inset-top));
+}
+
+footer.site-footer {
+  width: 100%;
+  max-width: 100%;
+  align-items: start;
+}
+
+.footer-brand,
+.footer-brand-copy,
+.footer-links,
+.footer-contact,
+.footer-legal,
+.footer-cookie-settings {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.footer-links a,
+.footer-disabled,
+.footer-contact a,
+.footer-legal,
+.footer-cookie-settings {
+  overflow-wrap: anywhere;
+}
+
+.footer-cookie-settings {
+  justify-self: start;
+}
+
+@media (max-width: 1024px) {
+  footer.site-footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+    padding: 44px 28px calc(38px + env(safe-area-inset-bottom));
+    text-align: left;
+  }
+
+  .footer-brand,
+  .footer-legal {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  #hero {
+    justify-content: flex-start;
+    padding-top: calc(190px + env(safe-area-inset-top));
+  }
+
+  .legal-page {
+    padding-top: calc(170px + env(safe-area-inset-top));
+  }
+
+  .brand-wall {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  header {
+    padding-top: calc(14px + env(safe-area-inset-top));
+    padding-right: 18px;
+    padding-bottom: 14px;
+    padding-left: 18px;
+  }
+
+  .logo-wrap {
+    min-width: 0;
+  }
+
+  .logo-mark img {
+    width: 56px;
+    height: 62px;
+  }
+
+  .logo-type .name,
+  .logo-type .tagline-sm {
+    overflow-wrap: anywhere;
+  }
+
+  nav {
+    gap: 10px 14px;
+  }
+
+  #hero {
+    min-height: 100svh;
+    padding: calc(205px + env(safe-area-inset-top)) 20px 48px;
+  }
+
+  .hero-title {
+    font-size: clamp(40px, 13vw, 58px);
+    line-height: 0.98;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+  }
+
+  .hero-cta,
+  .btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .scroll-hint {
+    right: 20px;
+    bottom: 18px;
+  }
+
+  .legal-page {
+    padding: calc(205px + env(safe-area-inset-top)) 20px 70px;
+  }
+
+  .legal-title {
+    font-size: clamp(38px, 14vw, 58px);
+    line-height: 1.02;
+  }
+
+  .legal-content h2 {
+    font-size: 28px;
+  }
+
+  footer.site-footer {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+    padding: 34px 20px calc(34px + env(safe-area-inset-bottom));
+    text-align: left;
+  }
+
+  .footer-brand,
+  .footer-legal {
+    grid-column: auto;
+  }
+
+  .footer-legal {
+    padding-top: 22px;
+  }
+
+  .analytics-consent {
+    max-width: calc(100% - 28px);
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    top: env(safe-area-inset-top);
+  }
+
+  .topbar-inner,
+  .page {
+    width: min(100% - 32px, 1200px);
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .brand-title,
+  .brand-sub,
+  .phase-label,
+  footer p {
+    overflow-wrap: anywhere;
+  }
+
+  .phase-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .phase-label {
+    white-space: normal;
+  }
+
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fork-block,
+  footer {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .brand-wall {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-title {
+    font-size: clamp(36px, 12.5vw, 48px);
+  }
+}
