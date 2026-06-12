@@ -502,6 +502,7 @@
 
     .demo-stage {
       --demo-mix: 62%;
+      --demo-color-ratio: 0.62;
       position: relative;
       display: grid;
       min-height: 0;
@@ -519,16 +520,7 @@
 
     .demo-video--mono {
       grid-area: 1 / 1;
-      filter: grayscale(1) contrast(1.08);
-    }
-
-    .demo-video--color {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      clip-path: inset(0 calc(100% - var(--demo-mix)) 0 0);
-      filter: saturate(1.04) contrast(1.02);
+      filter: grayscale(calc(1 - var(--demo-color-ratio))) contrast(1.08) saturate(1.04);
     }
 
     .demo-stage::after {
@@ -1725,7 +1717,6 @@
           <div class="demo-player-stack">
             <div class="demo-stage">
               <video class="demo-video demo-video--mono" data-demo-video playsinline webkit-playsinline preload="metadata" poster="demo/media/lex-fridman-intro/cover.jpg"></video>
-              <video class="demo-video demo-video--color" data-demo-color-video playsinline webkit-playsinline preload="metadata" poster="demo/media/lex-fridman-intro/cover.jpg" muted aria-hidden="true"></video>
               <audio data-demo-audio preload="metadata"></audio>
               <canvas class="demo-wave" data-demo-wave aria-hidden="true"></canvas>
               <div class="demo-language-flags" aria-hidden="true">
@@ -2226,7 +2217,6 @@
 
       const video = root.querySelector('[data-demo-video]');
       const audio = root.querySelector('[data-demo-audio]');
-      const colorVideo = root.querySelector('[data-demo-color-video]');
       const play = root.querySelector('[data-demo-play]');
       const scrub = root.querySelector('[data-demo-scrub]');
       const fader = root.querySelector('[data-demo-fader]');
@@ -2244,6 +2234,15 @@
       let isDraggingFader = false;
       let lastPointerStartAt = 0;
       let playRequestPending = false;
+      let pointerStartX = 0;
+      let pointerStartY = 0;
+      let pointerStartedOnKnob = false;
+      let pointerWasPlaying = false;
+      let pointerMoved = false;
+      let suppressStageClickUntil = 0;
+      let lastWaveDraw = 0;
+      let audioPlayRetryPending = false;
+      let lastDriftCorrectionAt = 0;
       const normalization = {
         loadId: 0,
         gain: { en: 1, pt: 1 }
@@ -2259,6 +2258,60 @@
 
       function clamp01(value) {
         return Math.max(0, Math.min(1, value));
+      }
+
+      function currentMix() {
+        return Math.max(0, Math.min(1, Number(fader.value) / 100));
+      }
+
+      function safeSeek(media, seconds) {
+        if (!Number.isFinite(seconds)) return;
+        const duration = Number.isFinite(media.duration) && media.duration > 0 ? media.duration : Infinity;
+        const nextTime = Math.max(0, Math.min(seconds, Math.max(0, duration - 0.08)));
+        try {
+          media.currentTime = nextTime;
+        } catch {
+          // Some mobile browsers briefly reject seeks while metadata is settling.
+        }
+      }
+
+      function syncLocalizedAudio(force = false) {
+        const target = video.currentTime || 0;
+        if (force || Math.abs(audio.currentTime - target) > 1.15) {
+          safeSeek(audio, target);
+          audio.playbackRate = 1;
+        }
+      }
+
+      function correctLocalizedDrift() {
+        if (video.paused || audio.paused || audio.ended) return;
+        const now = performance.now();
+        if (now - lastDriftCorrectionAt < 650) return;
+        lastDriftCorrectionAt = now;
+
+        const drift = audio.currentTime - video.currentTime;
+        const absDrift = Math.abs(drift);
+
+        if (absDrift > 1.15) {
+          syncLocalizedAudio(true);
+          return;
+        }
+
+        if (absDrift > 0.22) {
+          audio.playbackRate = drift > 0 ? 0.985 : 1.015;
+          return;
+        }
+
+        audio.playbackRate = 1;
+      }
+
+      function isKnobPoint(clientX, clientY) {
+        const knob = stage.querySelector('[data-demo-fader-knob]');
+        if (!knob) return false;
+        const rect = knob.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        return Math.hypot(clientX - centerX, clientY - centerY) <= Math.max(34, rect.width * 0.72);
       }
 
       function ensureAudioGraph() {
@@ -2312,9 +2365,9 @@
       }
 
       function applyFader() {
-        const mix = Number(fader.value) / 100;
-        const enGain = (1 - mix) * normalization.gain.en;
-        const ptGain = mix * normalization.gain.pt;
+        const mix = currentMix();
+        const enGain = Math.cos(mix * Math.PI / 2) * normalization.gain.en;
+        const ptGain = Math.sin(mix * Math.PI / 2) * normalization.gain.pt;
 
         if (audioGraph.ready && audioGraph.ctx) {
           video.volume = 1;
@@ -2331,6 +2384,7 @@
         }
 
         stage.style.setProperty('--demo-mix', `${mix * 100}%`);
+        stage.style.setProperty('--demo-color-ratio', mix.toFixed(3));
         stage.dataset.normEn = normalization.gain.en.toFixed(3);
         stage.dataset.normPt = normalization.gain.pt.toFixed(3);
         stage.dataset.gainEn = enGain.toFixed(3);
@@ -2359,6 +2413,21 @@
           });
       }
 
+      async function ensureLocalizedPlayback() {
+        if (video.paused || currentMix() < 0.02) return;
+        if (!audio.paused && !audio.ended) return;
+        if (audioPlayRetryPending) return;
+        audioPlayRetryPending = true;
+        try {
+          syncLocalizedAudio(true);
+          await audio.play();
+        } catch {
+          // Browser gesture policies may block this outside direct interaction.
+        } finally {
+          audioPlayRetryPending = false;
+        }
+      }
+
       function updateTime() {
         const duration = Number.isFinite(video.duration) ? video.duration : 0;
         if (!isSeeking && duration > 0) {
@@ -2376,8 +2445,8 @@
 
       function pauseAll() {
         video.pause();
-        colorVideo.pause();
         audio.pause();
+        audio.playbackRate = 1;
         setPlaying(false);
       }
 
@@ -2386,19 +2455,19 @@
         if (graphReady && audioGraph.ctx?.state === 'suspended') {
           await audioGraph.ctx.resume();
         }
-        audio.currentTime = video.currentTime;
-        colorVideo.currentTime = video.currentTime;
+        syncLocalizedAudio(true);
         applyFader();
-        await Promise.all([
+        const results = await Promise.allSettled([
           video.play(),
-          colorVideo.play().catch(() => {})
+          audio.play()
         ]);
-        try {
-          await audio.play();
-        } catch {
+
+        const videoFailed = results[0]?.status === 'rejected';
+        const audioFailed = results[1]?.status === 'rejected';
+        if (audioFailed) {
           audio.pause();
         }
-        setPlaying(true);
+        setPlaying(!videoFailed && !video.paused);
       }
 
       function loadDemo(index) {
@@ -2407,14 +2476,13 @@
         const demo = demos[index];
         title.textContent = `${demo.code} · ${demo.title}`;
         video.poster = demo.cover;
-        colorVideo.poster = demo.cover;
         video.src = demo.video;
-        colorVideo.src = demo.video;
         audio.src = demo.audio;
         stage.classList.remove('has-started');
         normalization.loadId += 1;
         normalization.gain = { ...(demo.fallbackGain || { en: 1, pt: 1 }) };
         scrub.value = 0;
+        audio.playbackRate = 1;
         caption.textContent = demo.captions.pt;
         cards.forEach((card) => {
           const isActive = Number(card.dataset.demoIndex) === index;
@@ -2422,7 +2490,6 @@
           card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
         video.load();
-        colorVideo.load();
         audio.load();
         applyFader();
         normalizeDemoAudio(demo, normalization.loadId);
@@ -2515,10 +2582,16 @@
         }
       }
 
-      function drawWave() {
+      function drawWave(timestamp = 0) {
+        const frameGap = video.paused ? 160 : 48;
+        if (timestamp - lastWaveDraw < frameGap) {
+          requestAnimationFrame(drawWave);
+          return;
+        }
+        lastWaveDraw = timestamp;
         const width = wave.clientWidth || 600;
         const height = wave.clientHeight || 76;
-        const mix = Number(fader.value) / 100;
+        const mix = currentMix();
         const splitX = width * mix;
         const activeEnergy = video.paused ? 0.22 : 0.85;
         waveCtx.clearRect(0, 0, width, height);
@@ -2563,6 +2636,11 @@
 
       stageFader.addEventListener('pointerdown', (event) => {
         lastPointerStartAt = Date.now();
+        pointerStartX = event.clientX;
+        pointerStartY = event.clientY;
+        pointerStartedOnKnob = isKnobPoint(event.clientX, event.clientY);
+        pointerWasPlaying = !video.paused;
+        pointerMoved = false;
         isDraggingFader = true;
         stageFader.classList.add('is-dragging');
         stageFader.setPointerCapture(event.pointerId);
@@ -2572,6 +2650,9 @@
 
       stageFader.addEventListener('pointermove', (event) => {
         if (!isDraggingFader) return;
+        if (Math.hypot(event.clientX - pointerStartX, event.clientY - pointerStartY) > 8) {
+          pointerMoved = true;
+        }
         setFaderFromClientX(event.clientX);
       });
 
@@ -2581,6 +2662,14 @@
         if (stageFader.hasPointerCapture(event.pointerId)) {
           stageFader.releasePointerCapture(event.pointerId);
         }
+        const isTapOnKnob = pointerStartedOnKnob && !pointerMoved && Date.now() - lastPointerStartAt < 420;
+        if (isTapOnKnob && pointerWasPlaying) {
+          event.preventDefault();
+          suppressStageClickUntil = Date.now() + 320;
+          pauseAll();
+        } else {
+          ensureLocalizedPlayback();
+        }
       });
 
       stageFader.addEventListener('pointercancel', () => {
@@ -2589,8 +2678,13 @@
       });
 
       stageFader.addEventListener('click', (event) => {
+        if (Date.now() < suppressStageClickUntil) {
+          event.preventDefault();
+          return;
+        }
         setFaderFromClientX(event.clientX);
         startFromStage();
+        ensureLocalizedPlayback();
       }, true);
 
       stageFader.addEventListener('mousedown', (event) => {
@@ -2615,21 +2709,40 @@
       stageFader.addEventListener('touchstart', (event) => {
         const touch = event.touches[0];
         if (!touch) return;
+        pointerStartX = touch.clientX;
+        pointerStartY = touch.clientY;
+        pointerStartedOnKnob = isKnobPoint(touch.clientX, touch.clientY);
+        pointerWasPlaying = !video.paused;
+        pointerMoved = false;
+        lastPointerStartAt = Date.now();
         isDraggingFader = true;
         stageFader.classList.add('is-dragging');
         setFaderFromClientX(touch.clientX);
         startFromStage();
-      }, { passive: true });
+      }, { passive: false });
 
       stageFader.addEventListener('touchmove', (event) => {
         if (!isDraggingFader) return;
         const touch = event.touches[0];
-        if (touch) setFaderFromClientX(touch.clientX);
-      }, { passive: true });
+        if (touch) {
+          if (Math.hypot(touch.clientX - pointerStartX, touch.clientY - pointerStartY) > 8) {
+            pointerMoved = true;
+          }
+          setFaderFromClientX(touch.clientX);
+        }
+      }, { passive: false });
 
-      stageFader.addEventListener('touchend', () => {
+      stageFader.addEventListener('touchend', (event) => {
         isDraggingFader = false;
         stageFader.classList.remove('is-dragging');
+        const isTapOnKnob = pointerStartedOnKnob && !pointerMoved && Date.now() - lastPointerStartAt < 420;
+        if (isTapOnKnob && pointerWasPlaying) {
+          event.preventDefault();
+          suppressStageClickUntil = Date.now() + 320;
+          pauseAll();
+        } else {
+          ensureLocalizedPlayback();
+        }
       });
 
       stageFader.addEventListener('keydown', (event) => {
@@ -2651,17 +2764,15 @@
         const duration = Number.isFinite(video.duration) ? video.duration : 0;
         const nextTime = (Number(scrub.value) / 1000) * duration;
         if (duration > 0) {
-          video.currentTime = nextTime;
-          colorVideo.currentTime = nextTime;
-          audio.currentTime = nextTime;
+          safeSeek(video, nextTime);
+          syncLocalizedAudio(true);
           updateTime();
         }
       });
 
       scrub.addEventListener('change', () => {
         isSeeking = false;
-        colorVideo.currentTime = video.currentTime;
-        audio.currentTime = video.currentTime;
+        syncLocalizedAudio(true);
       });
 
       cards.forEach((card) => {
@@ -2670,21 +2781,24 @@
 
       video.addEventListener('loadedmetadata', updateTime);
       video.addEventListener('timeupdate', () => {
-        if (Math.abs(colorVideo.currentTime - video.currentTime) > 0.22) {
-          colorVideo.currentTime = video.currentTime;
-        }
-        if (!video.paused && Math.abs(audio.currentTime - video.currentTime) > 0.22) {
-          audio.currentTime = video.currentTime;
-        }
+        correctLocalizedDrift();
         updateTime();
       });
       video.addEventListener('pause', () => {
-        if (!colorVideo.paused) colorVideo.pause();
         if (!audio.paused) audio.pause();
         setPlaying(false);
       });
       video.addEventListener('ended', pauseAll);
-      audio.addEventListener('ended', pauseAll);
+      audio.addEventListener('pause', () => {
+        if (!video.paused && currentMix() > 0.02 && !audio.ended) {
+          ensureLocalizedPlayback();
+        }
+      });
+      audio.addEventListener('ended', () => {
+        if (video.ended || (Number.isFinite(video.duration) && video.currentTime >= video.duration - 0.3)) {
+          pauseAll();
+        }
+      });
 
       window.addEventListener('resize', resizeWave);
       resizeWave();
