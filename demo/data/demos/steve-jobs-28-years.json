@@ -1,0 +1,37 @@
+{
+  "id": "steve-jobs-28-years",
+  "title": "Steve Jobs — 28 Years",
+  "author": "Steve Jobs, 28 anos, cofundador da Apple. Tom de quem pensa em voz alta, misturando experiência pessoal com visão de futuro. Fala em inglês americano coloquial, com pausas reflexivas e construções informais.",
+  "description": "Trecho de palestra histórica de Steve Jobs aos 28 anos, proferida na International Design Conference em Aspen, junho de 1983. No segmento em questão (20:25–21:52), Jobs faz uma reflexão pessoal e filosófica sobre educação, leitura e o papel futuro dos computadores como mediadores do conhecimento humano.",
+  "lang_from": "EN",
+  "lang_to": "PT-BR",
+  "duration": "01:27",
+  "cover": "media/steve-jobs-28-years/cover.jpg",
+  "video": "media/steve-jobs-28-years/video.mp4",
+  "tracks": {
+    "original": {
+      "label": "ORIGINAL · EN",
+      "language": "en",
+      "embedded_in_video": true
+    },
+    "localized": {
+      "label": "LOCALIZED · PT-BR",
+      "language": "pt-BR",
+      "src": "media/steve-jobs-28-years/localized-ptbr.m4a"
+    }
+  },
+  "subtitles": {
+    "original": null,
+    "localized": null
+  },
+  "audio_processing": {
+    "normalized_offline": true,
+    "target_integrated_lufs": -10,
+    "target_true_peak_dbtp": -1.0,
+    "status": "prepared-offline"
+  },
+  "source_context": {
+    "available_locally": true,
+    "filename": "context.json"
+  }
+}

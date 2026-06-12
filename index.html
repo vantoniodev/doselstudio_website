@@ -345,6 +345,7 @@
       padding: 120px 48px;
       border-top: 1px solid var(--line);
       position: relative;
+      scroll-margin-top: 132px;
     }
 
     /* Alternating background tones for depth */
@@ -385,6 +386,483 @@
       border: 1px solid var(--cream);
       border-radius: 50%;
       background: transparent;
+    }
+
+    /* ── Embedded demos / vox-humana player ───────────────── */
+    #demos {
+      --demo-red: #ff1010;
+      --demo-black: #070707;
+      --demo-steel: #d8d6d1;
+      --demo-cement: #ece9e2;
+      --demo-line: rgba(7,7,7,0.18);
+      overflow: hidden;
+      background:
+        linear-gradient(var(--demo-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--demo-line) 1px, transparent 1px),
+        var(--demo-cement);
+      background-size: 64px 64px;
+      color: var(--demo-black);
+    }
+
+    .demo-shell {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.38fr) minmax(0, 1.62fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .demo-head {
+      display: grid;
+      grid-template-rows: auto auto auto;
+      align-content: start;
+      min-height: 0;
+      border: 1px solid var(--demo-black);
+      background: rgba(242,236,224,0.72);
+    }
+
+    .demo-section-label {
+      margin: 0;
+      padding: 18px;
+      border-bottom: 1px solid var(--demo-black);
+      color: var(--demo-black);
+    }
+
+    .demo-section-label::before {
+      background: var(--demo-red);
+      box-shadow: 0 0 18px rgba(255,16,16,0.75);
+    }
+
+    .demo-title {
+      align-self: start;
+      padding: clamp(24px, 4vw, 42px) 18px 18px;
+      font-family: var(--font-sans);
+      font-size: clamp(40px, 3.5vw, 48px);
+      font-weight: 900;
+      line-height: 0.84;
+      letter-spacing: 0;
+      text-transform: none;
+      overflow-wrap: anywhere;
+    }
+
+    .demo-copy {
+      padding: 18px;
+      border-top: 1px solid var(--demo-black);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.7;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(7,7,7,0.68);
+    }
+
+    .demo-console {
+      border: 1px solid var(--demo-black);
+      background: var(--demo-black);
+      box-shadow:
+        0 24px 50px rgba(7,7,7,0.22),
+        0 0 0 1px rgba(255,255,255,0.08) inset;
+    }
+
+    .demo-console-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 0.34fr);
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    .demo-player-stack {
+      display: grid;
+      grid-template-rows: minmax(360px, 58vh) auto;
+      min-width: 0;
+      border-right: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .demo-console-top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      min-height: 58px;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.18);
+      color: var(--cream);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .demo-live-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--demo-red);
+      box-shadow: 0 0 22px rgba(255,16,16,0.95), 0 0 54px rgba(255,16,16,0.45);
+    }
+
+    .demo-stage {
+      --demo-mix: 62%;
+      position: relative;
+      display: grid;
+      min-height: 0;
+      overflow: hidden;
+      background: #111;
+    }
+
+    .demo-video {
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      display: block;
+      object-fit: cover;
+    }
+
+    .demo-video--mono {
+      grid-area: 1 / 1;
+      filter: grayscale(1) contrast(1.08);
+    }
+
+    .demo-video--color {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      clip-path: inset(0 calc(100% - var(--demo-mix)) 0 0);
+      filter: saturate(1.04) contrast(1.02);
+    }
+
+    .demo-stage::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(7,7,7,0.10), rgba(7,7,7,0.62)),
+        repeating-linear-gradient(0deg, transparent 0 7px, rgba(255,255,255,0.045) 8px);
+      mix-blend-mode: normal;
+    }
+
+    .demo-wave {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      left: 18px;
+      width: calc(100% - 36px);
+      transform: translateY(-50%);
+      z-index: 2;
+      height: clamp(82px, 14vw, 116px);
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(7,7,7,0.58);
+    }
+
+    .demo-stage-fader {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      cursor: ew-resize;
+      touch-action: none;
+    }
+
+    .demo-stage-fader::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: var(--demo-mix);
+      width: 1px;
+      background: rgba(255,255,255,0.5);
+      box-shadow:
+        0 0 0 1px rgba(255,16,16,0.36),
+        0 0 28px rgba(255,16,16,0.78);
+      transform: translateX(-50%);
+    }
+
+    .demo-stage-fader::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg,
+          rgba(242,236,224,0.10) 0,
+          rgba(242,236,224,0.10) var(--demo-mix),
+          rgba(255,16,16,0.12) var(--demo-mix),
+          rgba(255,16,16,0.12) 100%);
+    }
+
+    .demo-fader-knob {
+      position: absolute;
+      top: 50%;
+      left: var(--demo-mix);
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.62);
+      border-radius: 50%;
+      background: var(--demo-red);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      line-height: 1;
+      box-shadow: 0 0 32px rgba(255,16,16,0.82), 0 0 0 8px rgba(7,7,7,0.34);
+      transform: translate(-50%, -50%);
+      user-select: none;
+    }
+
+    .demo-knob-play {
+      width: 18px;
+      height: 18px;
+      margin-left: 2px;
+    }
+
+    .demo-knob-pause {
+      display: none;
+    }
+
+    .demo-stage.has-started .demo-knob-play {
+      display: none;
+    }
+
+    .demo-stage.has-started .demo-knob-pause {
+      display: block;
+    }
+
+    .demo-stage-fader:focus-visible .demo-fader-knob,
+    .demo-stage-fader.is-dragging .demo-fader-knob {
+      outline: 1px solid rgba(255,255,255,0.78);
+      outline-offset: 5px;
+      box-shadow: 0 0 42px rgba(255,16,16,0.94), 0 0 0 10px rgba(7,7,7,0.38);
+    }
+
+    .demo-language-flags {
+      position: absolute;
+      right: 18px;
+      left: 18px;
+      top: calc(50% - clamp(82px, 14vw, 116px) / 2 - 34px);
+      z-index: 4;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(242,236,224,0.78);
+    }
+
+    .demo-language-flags span:last-child {
+      color: rgba(255,80,80,0.95);
+      text-shadow: 0 0 14px rgba(255,16,16,0.72);
+    }
+
+    .demo-caption {
+      position: absolute;
+      right: 18px;
+      bottom: 26px;
+      left: 18px;
+      z-index: 3;
+      min-height: 44px;
+      padding: 12px 14px;
+      border-left: 4px solid var(--demo-red);
+      background: rgba(7,7,7,0.82);
+      color: var(--cream);
+      font-family: var(--font-mono);
+      font-size: clamp(12px, 1.2vw, 15px);
+      line-height: 1.45;
+      letter-spacing: 0.02em;
+    }
+
+    .demo-controls {
+      display: grid;
+      grid-template-columns: auto minmax(130px, 1fr) minmax(220px, 0.9fr) auto;
+      gap: 18px;
+      align-items: center;
+      padding: 18px;
+      border-top: 1px solid rgba(255,255,255,0.18);
+      background: #050505;
+      color: var(--cream);
+    }
+
+    .demo-play {
+      width: 64px;
+      height: 64px;
+      border: 1px solid rgba(255,255,255,0.34);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--demo-red);
+      color: #fff;
+      box-shadow: 0 0 28px rgba(255,16,16,0.72);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .demo-play:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 38px rgba(255,16,16,0.92);
+    }
+
+    .demo-play svg {
+      width: 22px;
+      height: 22px;
+      margin-left: 2px;
+    }
+
+    .demo-play.is-playing svg {
+      margin-left: 0;
+    }
+
+    .demo-play .pause-mark { display: none; }
+    .demo-play.is-playing .play-mark { display: none; }
+    .demo-play.is-playing .pause-mark { display: block; }
+
+    .demo-scrub,
+    .demo-fader {
+      width: 100%;
+      accent-color: var(--demo-red);
+    }
+
+    .demo-control-block {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .demo-control-label,
+    .demo-time {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(242,236,224,0.74);
+    }
+
+    .demo-time {
+      white-space: nowrap;
+      color: var(--cream);
+    }
+
+    .demo-fader-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(242,236,224,0.66);
+    }
+
+    .demo-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      align-content: stretch;
+      border-left: 1px solid var(--demo-black);
+      background: var(--demo-steel);
+    }
+
+    .demo-panel {
+      min-height: 0;
+      padding: 12px;
+      border-right: 1px solid var(--demo-black);
+      border-bottom: 1px solid var(--demo-black);
+      background: rgba(255,255,255,0.54);
+      text-align: left;
+    }
+
+    .demo-panel--active {
+      background: var(--cream);
+      box-shadow: 0 -4px 0 var(--demo-red) inset;
+    }
+
+    .demo-panel-code {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(7,7,7,0.64);
+    }
+
+    .demo-panel--active .demo-panel-code::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--demo-red);
+      box-shadow: 0 0 16px rgba(255,16,16,0.8);
+      flex: 0 0 auto;
+    }
+
+    .demo-panel-thumb {
+      position: relative;
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      overflow: hidden;
+      aspect-ratio: 2.35 / 1;
+      border: 1px solid rgba(7,7,7,0.28);
+      background: var(--demo-black);
+    }
+
+    .demo-panel-thumb img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      filter: grayscale(0.9) contrast(1.08);
+      opacity: 0.86;
+      transition: opacity 0.2s ease, filter 0.2s ease;
+    }
+
+    .demo-panel--active .demo-panel-thumb img,
+    .demo-panel:hover .demo-panel-thumb img {
+      filter: grayscale(0.35) contrast(1.08);
+      opacity: 1;
+    }
+
+    .demo-panel-title {
+      display: block;
+      color: var(--demo-black);
+      font-family: var(--font-sans);
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.04;
+      letter-spacing: 0;
+      text-transform: lowercase;
+    }
+
+    .demo-panel-desc {
+      display: block;
+      margin-top: 12px;
+      color: rgba(7,7,7,0.68);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      line-height: 1.5;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .demo-panel-link {
+      display: grid;
+      align-content: space-between;
+      min-height: 0;
+      padding: 12px;
+      border-right: 1px solid var(--demo-black);
+      border-bottom: 1px solid var(--demo-black);
+      background: var(--demo-black);
+      color: var(--cream);
+      text-decoration: none;
+    }
+
+    .demo-panel-link span:last-child {
+      color: var(--demo-red);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
 
     /* ── Pipeline ──────────────────────────────────────────── */
@@ -1038,9 +1516,25 @@
       #hero { padding: 0 28px 56px; }
       section { padding: 80px 28px; }
       #pipeline,
+      .demo-shell,
       .ecosystem-head {
         grid-template-columns: 1fr;
         gap: 44px;
+      }
+      .demo-head { min-height: auto; }
+      .demo-console-body {
+        grid-template-columns: 1fr;
+      }
+      .demo-player-stack {
+        grid-template-rows: minmax(360px, 58vw) auto;
+        border-right: none;
+      }
+      .demo-controls { grid-template-columns: auto 1fr; }
+      .demo-control-block--fader,
+      .demo-time { grid-column: 1 / -1; }
+      .demo-meta-grid {
+        grid-template-columns: repeat(2, 1fr);
+        border-top: 1px solid var(--demo-black);
       }
       .brand-wall { grid-template-columns: repeat(3, 1fr); }
       #about { grid-template-columns: 1fr; gap: 48px; }
@@ -1093,6 +1587,28 @@
       .hero-divider { display: none; }
       .hero-cta { padding: 13px 18px; }
       section { padding: 60px 20px; }
+      section { scroll-margin-top: 190px; }
+      .demo-title { font-size: clamp(44px, 17vw, 72px); }
+      .demo-player-stack { grid-template-rows: 320px auto; }
+      .demo-fader-knob {
+        width: 48px;
+        height: 48px;
+      }
+      .demo-language-flags {
+        top: 16px;
+      }
+      .demo-console-top { grid-template-columns: 1fr auto; }
+      .demo-controls {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .demo-play {
+        width: 58px;
+        height: 58px;
+      }
+      .demo-meta-grid { grid-template-columns: 1fr; }
+      .demo-panel,
+      .demo-panel-link { min-height: 136px; }
       .pipeline-proof { grid-template-columns: 1fr; }
       .flow-step {
         grid-template-columns: 1fr;
@@ -1142,6 +1658,7 @@
 
     <nav>
       <a href="#pipeline">Pipeline</a>
+      <a href="/demo">Demo</a>
       <a href="#ecosystem">Stack</a>
       <a href="#services">Services</a>
       <a href="#environment">Studio</a>
@@ -1162,9 +1679,9 @@
     <div class="hero-content">
       <p class="hero-eyebrow">Dosel Studio · Vox-Humana</p>
       <h1 class="hero-title">
-        Cultural<br />
-        localization with<br />
-        <em>human-directed AI voices</em>.
+        Disturbing<br />
+        the universe with<br />
+        <em>human voices</em>.
       </h1>
       <p class="hero-copy">
         Expand your content for Brazilian Portuguese audiences — and reach Portuguese-speaking markets with AI-generated voices that sound natural, are guided by human direction, and are finished through a professional analog studio workflow.
@@ -1187,6 +1704,100 @@
     </div>
 
     <div class="scroll-hint">Scroll</div>
+  </section>
+
+  <!-- ── Demos / Interactive Player ───────────────────────── -->
+  <section id="demos">
+    <div class="demo-shell">
+      <div class="demo-head reveal">
+        <div class="section-label demo-section-label">Demos</div>
+        <h2 class="demo-title">Vox-<br />Humana</h2>
+        <p class="demo-copy">A/B localization console · original performance and Brazilian Portuguese voice in one synchronized device.</p>
+      </div>
+
+      <div class="demo-console reveal" data-landing-demo>
+        <div class="demo-console-top">
+          <span data-demo-title>Lex Fridman — Intro</span>
+          <span class="demo-live-dot" aria-hidden="true"></span>
+        </div>
+
+        <div class="demo-console-body">
+          <div class="demo-player-stack">
+            <div class="demo-stage">
+              <video class="demo-video demo-video--mono" data-demo-video playsinline webkit-playsinline preload="metadata" poster="demo/media/lex-fridman-intro/cover.jpg"></video>
+              <video class="demo-video demo-video--color" data-demo-color-video playsinline webkit-playsinline preload="metadata" poster="demo/media/lex-fridman-intro/cover.jpg" muted aria-hidden="true"></video>
+              <audio data-demo-audio preload="metadata"></audio>
+              <canvas class="demo-wave" data-demo-wave aria-hidden="true"></canvas>
+              <div class="demo-language-flags" aria-hidden="true">
+                <span>original · en</span>
+                <span>localized · pt-br</span>
+              </div>
+              <div class="demo-stage-fader" data-demo-stage-fader role="slider" tabindex="0" aria-label="Crossfade original English to localized Portuguese" aria-valuemin="0" aria-valuemax="100" aria-valuenow="62">
+                <div class="demo-fader-knob" data-demo-fader-knob aria-hidden="true">
+                  <svg class="demo-knob-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M4 2.5 L13 8 L4 13.5 Z"></path>
+                  </svg>
+                  <span class="demo-knob-pause">Ⅱ</span>
+                </div>
+              </div>
+              <div class="demo-caption" data-demo-caption>localized voice ready</div>
+            </div>
+
+            <div class="demo-controls">
+              <button class="demo-play" type="button" data-demo-play aria-label="Play demo">
+                <svg class="play-mark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <path d="M4 2.5 L13 8 L4 13.5 Z"></path>
+                </svg>
+                <svg class="pause-mark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <path d="M4 2h2.5v12H4zm5.5 0H12v12H9.5z"></path>
+                </svg>
+              </button>
+
+              <div class="demo-control-block">
+                <span class="demo-control-label">transport</span>
+                <input class="demo-scrub" type="range" min="0" max="1000" value="0" step="1" data-demo-scrub aria-label="Seek demo">
+              </div>
+
+              <div class="demo-control-block demo-control-block--fader">
+                <div class="demo-fader-labels">
+                  <span>original · en</span>
+                  <span>localized · pt-br</span>
+                </div>
+                <input class="demo-fader" type="range" min="0" max="100" value="62" step="1" data-demo-fader aria-label="Crossfade original to localized">
+              </div>
+
+              <div class="demo-time" data-demo-time>0:00 / —:——</div>
+            </div>
+          </div>
+
+          <div class="demo-meta-grid" data-demo-cards>
+            <button class="demo-panel demo-panel--active" type="button" data-demo-index="0">
+              <span class="demo-panel-code">A · 01</span>
+              <span class="demo-panel-thumb"><img src="demo/media/lex-fridman-intro/cover.jpg" alt=""></span>
+              <span class="demo-panel-title">lex intro</span>
+              <span class="demo-panel-desc">podcast cadence · EN → PT-BR</span>
+            </button>
+            <button class="demo-panel" type="button" data-demo-index="1">
+              <span class="demo-panel-code">B · 02</span>
+              <span class="demo-panel-thumb"><img src="demo/media/steve-jobs-28-years/cover.jpg" alt=""></span>
+              <span class="demo-panel-title">jobs talk</span>
+              <span class="demo-panel-desc">archival speech · directed TTS</span>
+            </button>
+            <button class="demo-panel" type="button" data-demo-index="2">
+              <span class="demo-panel-code">C · 03</span>
+              <span class="demo-panel-thumb"><img src="demo/assets_demo_online/cover.jpeg" alt=""></span>
+              <span class="demo-panel-title">woolf radio</span>
+              <span class="demo-panel-desc">historic voice · studio localization</span>
+            </button>
+            <a class="demo-panel-link" href="/demo">
+              <span class="demo-panel-code">R · full</span>
+              <span class="demo-panel-title">open demo page</span>
+              <span>launch /demo</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ── Pipeline ──────────────────────────────────────────── -->
@@ -1565,6 +2176,521 @@
       });
     }, { threshold: 0.12 });
     reveals.forEach(el => io.observe(el));
+
+    // ── Landing demo player ─────────────────────────────────
+    (function initLandingDemoPlayer() {
+      const root = document.querySelector('[data-landing-demo]');
+      if (!root) return;
+
+      const demos = [
+        {
+          title: 'Lex Fridman — Intro',
+          code: 'A · 01',
+          video: 'demo/media/lex-fridman-intro/video.mp4',
+          audio: 'demo/media/lex-fridman-intro/localized-ptbr.m4a',
+          cover: 'demo/media/lex-fridman-intro/cover.jpg',
+          fallbackGain: { en: 0.288, pt: 0.289 },
+          captions: {
+            en: 'Original cadence: reflective, close-mic podcast delivery.',
+            pt: 'Versão localizada: ritmo preservado, voz em português brasileiro.'
+          }
+        },
+        {
+          title: 'Steve Jobs — 28 Years',
+          code: 'B · 02',
+          video: 'demo/media/steve-jobs-28-years/video.mp4',
+          audio: 'demo/media/steve-jobs-28-years/localized-ptbr.m4a',
+          cover: 'demo/media/steve-jobs-28-years/cover.jpg',
+          fallbackGain: { en: 0.277, pt: 0.281 },
+          captions: {
+            en: 'Original speech texture: informal, visionary, paced by pauses.',
+            pt: 'Direção em PT-BR: intenção e pausas mantidas para soar natural.'
+          }
+        },
+        {
+          title: 'A Arte das Palavras',
+          code: 'C · 03',
+          video: 'demo/videos/The Recorded Voice Of Virginia Woolf_video_web.mp4',
+          audio: 'demo/assets_demo_online/audio_localizado_ptbr.wav',
+          cover: 'demo/assets_demo_online/cover.jpeg',
+          fallbackGain: { en: 5.15, pt: 2.01 },
+          captions: {
+            en: 'Historic source: BBC Radio recording with archival texture.',
+            pt: 'Localização de estúdio: presença, inteligibilidade e continuidade.'
+          }
+        }
+      ];
+
+      const TARGET_DEMO_LUFS = -21;
+      const MAX_DEMO_NORM_GAIN = 10;
+
+      const video = root.querySelector('[data-demo-video]');
+      const audio = root.querySelector('[data-demo-audio]');
+      const colorVideo = root.querySelector('[data-demo-color-video]');
+      const play = root.querySelector('[data-demo-play]');
+      const scrub = root.querySelector('[data-demo-scrub]');
+      const fader = root.querySelector('[data-demo-fader]');
+      const stage = root.querySelector('.demo-stage');
+      const stageFader = root.querySelector('[data-demo-stage-fader]');
+      const title = root.querySelector('[data-demo-title]');
+      const time = root.querySelector('[data-demo-time]');
+      const caption = root.querySelector('[data-demo-caption]');
+      const wave = root.querySelector('[data-demo-wave]');
+      const cards = root.querySelectorAll('[data-demo-index]');
+      const waveCtx = wave.getContext('2d');
+      let activeDemo = 0;
+      let wavePhase = 0;
+      let isSeeking = false;
+      let isDraggingFader = false;
+      let lastPointerStartAt = 0;
+      let playRequestPending = false;
+      const normalization = {
+        loadId: 0,
+        gain: { en: 1, pt: 1 }
+      };
+      const audioGraph = {
+        ctx: null,
+        enSource: null,
+        ptSource: null,
+        enGain: null,
+        ptGain: null,
+        ready: false
+      };
+
+      function clamp01(value) {
+        return Math.max(0, Math.min(1, value));
+      }
+
+      function ensureAudioGraph() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return false;
+
+        if (!audioGraph.ctx) {
+          audioGraph.ctx = new AudioCtx();
+        }
+
+        if (!audioGraph.enGain) {
+          audioGraph.enGain = audioGraph.ctx.createGain();
+          audioGraph.enGain.gain.value = 0;
+          audioGraph.enGain.connect(audioGraph.ctx.destination);
+        }
+
+        if (!audioGraph.ptGain) {
+          audioGraph.ptGain = audioGraph.ctx.createGain();
+          audioGraph.ptGain.gain.value = 0;
+          audioGraph.ptGain.connect(audioGraph.ctx.destination);
+        }
+
+        if (!audioGraph.enSource) {
+          audioGraph.enSource = audioGraph.ctx.createMediaElementSource(video);
+          audioGraph.enSource.connect(audioGraph.enGain);
+        }
+
+        if (!audioGraph.ptSource) {
+          audioGraph.ptSource = audioGraph.ctx.createMediaElementSource(audio);
+          audioGraph.ptSource.connect(audioGraph.ptGain);
+        }
+
+        audioGraph.ready = true;
+        return true;
+      }
+
+      function formatTime(seconds) {
+        if (!Number.isFinite(seconds) || seconds < 0) return '—:——';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+        return `${mins}:${secs}`;
+      }
+
+      function resizeWave() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const width = wave.clientWidth || 600;
+        const height = wave.clientHeight || 76;
+        wave.width = Math.floor(width * dpr);
+        wave.height = Math.floor(height * dpr);
+        waveCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function applyFader() {
+        const mix = Number(fader.value) / 100;
+        const enGain = (1 - mix) * normalization.gain.en;
+        const ptGain = mix * normalization.gain.pt;
+
+        if (audioGraph.ready && audioGraph.ctx) {
+          video.volume = 1;
+          audio.volume = 1;
+          const now = audioGraph.ctx.currentTime;
+          audioGraph.enGain.gain.cancelScheduledValues(now);
+          audioGraph.ptGain.gain.cancelScheduledValues(now);
+          audioGraph.enGain.gain.setTargetAtTime(enGain, now, 0.018);
+          audioGraph.ptGain.gain.setTargetAtTime(ptGain, now, 0.018);
+        } else {
+          const scale = Math.max(1, enGain, ptGain);
+          video.volume = clamp01(enGain / scale);
+          audio.volume = clamp01(ptGain / scale);
+        }
+
+        stage.style.setProperty('--demo-mix', `${mix * 100}%`);
+        stage.dataset.normEn = normalization.gain.en.toFixed(3);
+        stage.dataset.normPt = normalization.gain.pt.toFixed(3);
+        stage.dataset.gainEn = enGain.toFixed(3);
+        stage.dataset.gainPt = ptGain.toFixed(3);
+        stageFader.setAttribute('aria-valuenow', String(Math.round(mix * 100)));
+        const demo = demos[activeDemo];
+        caption.textContent = mix >= 0.5 ? demo.captions.pt : demo.captions.en;
+      }
+
+      function setFaderFromClientX(clientX) {
+        const rect = stage.getBoundingClientRect();
+        const next = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+        fader.value = String(Math.round(next));
+        applyFader();
+      }
+
+      function startFromStage() {
+        if (!video.paused || playRequestPending) return;
+        playRequestPending = true;
+        playAll()
+          .catch(() => {
+            setPlaying(false);
+          })
+          .finally(() => {
+            playRequestPending = false;
+          });
+      }
+
+      function updateTime() {
+        const duration = Number.isFinite(video.duration) ? video.duration : 0;
+        if (!isSeeking && duration > 0) {
+          scrub.value = Math.round((video.currentTime / duration) * 1000);
+        }
+        time.textContent = `${formatTime(video.currentTime)} / ${formatTime(duration)}`;
+      }
+
+      function setPlaying(playing) {
+        play.classList.toggle('is-playing', playing);
+        stage.classList.toggle('is-playing', playing);
+        if (playing) stage.classList.add('has-started');
+        play.setAttribute('aria-label', playing ? 'Pause demo' : 'Play demo');
+      }
+
+      function pauseAll() {
+        video.pause();
+        colorVideo.pause();
+        audio.pause();
+        setPlaying(false);
+      }
+
+      async function playAll() {
+        const graphReady = ensureAudioGraph();
+        if (graphReady && audioGraph.ctx?.state === 'suspended') {
+          await audioGraph.ctx.resume();
+        }
+        audio.currentTime = video.currentTime;
+        colorVideo.currentTime = video.currentTime;
+        applyFader();
+        await Promise.all([
+          video.play(),
+          colorVideo.play().catch(() => {})
+        ]);
+        try {
+          await audio.play();
+        } catch {
+          audio.pause();
+        }
+        setPlaying(true);
+      }
+
+      function loadDemo(index) {
+        activeDemo = index;
+        pauseAll();
+        const demo = demos[index];
+        title.textContent = `${demo.code} · ${demo.title}`;
+        video.poster = demo.cover;
+        colorVideo.poster = demo.cover;
+        video.src = demo.video;
+        colorVideo.src = demo.video;
+        audio.src = demo.audio;
+        stage.classList.remove('has-started');
+        normalization.loadId += 1;
+        normalization.gain = { ...(demo.fallbackGain || { en: 1, pt: 1 }) };
+        scrub.value = 0;
+        caption.textContent = demo.captions.pt;
+        cards.forEach((card) => {
+          const isActive = Number(card.dataset.demoIndex) === index;
+          card.classList.toggle('demo-panel--active', isActive);
+          card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+        video.load();
+        colorVideo.load();
+        audio.load();
+        applyFader();
+        normalizeDemoAudio(demo, normalization.loadId);
+        updateTime();
+      }
+
+      async function normalizeDemoAudio(demo, loadId) {
+        const [enResult, ptResult] = await Promise.allSettled([
+          measureNormalizationGain(demo.video),
+          measureNormalizationGain(demo.audio)
+        ]);
+        if (loadId !== normalization.loadId) return;
+
+        const nextGain = { ...normalization.gain };
+        if (enResult.status === 'fulfilled' && Number.isFinite(enResult.value?.gain)) {
+          nextGain.en = enResult.value.gain;
+        }
+        if (ptResult.status === 'fulfilled' && Number.isFinite(ptResult.value?.gain)) {
+          nextGain.pt = ptResult.value.gain;
+        }
+
+        normalization.gain = nextGain;
+        applyFader();
+      }
+
+      async function measureNormalizationGain(url) {
+        const audioBuffer = await decodeAudioForNormalization(url);
+        if (!audioBuffer || audioBuffer.duration < 0.5) {
+          return null;
+        }
+
+        const OfflineCtx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+        if (!OfflineCtx) return null;
+
+        const offline = new OfflineCtx(audioBuffer.numberOfChannels, audioBuffer.length, audioBuffer.sampleRate);
+        const source = offline.createBufferSource();
+        const highShelf = offline.createBiquadFilter();
+        const highPass = offline.createBiquadFilter();
+
+        source.buffer = audioBuffer;
+        highShelf.type = 'highshelf';
+        highShelf.frequency.value = 1681.97;
+        highShelf.gain.value = 4.0;
+        highPass.type = 'highpass';
+        highPass.frequency.value = 38.13;
+        highPass.Q.value = 0.5;
+
+        source.connect(highShelf);
+        highShelf.connect(highPass);
+        highPass.connect(offline.destination);
+        source.start(0);
+
+        const rendered = await offline.startRendering();
+        let squareSum = 0;
+        let sampleCount = 0;
+
+        for (let channel = 0; channel < rendered.numberOfChannels; channel += 1) {
+          const samples = rendered.getChannelData(channel);
+          for (let i = 0; i < samples.length; i += 1) {
+            squareSum += samples[i] * samples[i];
+          }
+          sampleCount += samples.length;
+        }
+
+        const meanSquare = sampleCount ? squareSum / sampleCount : 0;
+        if (meanSquare <= 1e-12) return null;
+
+        const measuredLUFS = -0.691 + 10 * Math.log10(meanSquare);
+        const gainDB = TARGET_DEMO_LUFS - measuredLUFS;
+        const gain = Math.min(MAX_DEMO_NORM_GAIN, Math.pow(10, gainDB / 20));
+        return { gain, measuredLUFS };
+      }
+
+      async function decodeAudioForNormalization(url) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) return null;
+
+          const arrayBuffer = await response.arrayBuffer();
+          const OfflineCtx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+          if (OfflineCtx) {
+            const decodeCtx = new OfflineCtx(1, 1, 44100);
+            return await decodeCtx.decodeAudioData(arrayBuffer.slice(0));
+          }
+
+          if (!audioGraph.ctx) return null;
+          return await audioGraph.ctx.decodeAudioData(arrayBuffer.slice(0));
+        } catch {
+          return null;
+        }
+      }
+
+      function drawWave() {
+        const width = wave.clientWidth || 600;
+        const height = wave.clientHeight || 76;
+        const mix = Number(fader.value) / 100;
+        const splitX = width * mix;
+        const activeEnergy = video.paused ? 0.22 : 0.85;
+        waveCtx.clearRect(0, 0, width, height);
+        waveCtx.fillStyle = 'rgba(7,7,7,0.62)';
+        waveCtx.fillRect(0, 0, width, height);
+        const bars = Math.max(36, Math.floor(width / 10));
+        for (let i = 0; i < bars; i += 1) {
+          const x = (i / bars) * width;
+          const seed = Math.sin(i * 1.7 + activeDemo * 2.1);
+          const pulse = Math.sin(wavePhase + i * 0.42);
+          const barHeight = (12 + Math.abs(seed * 20 + pulse * 18) * activeEnergy);
+          const isPortugueseSide = x >= splitX;
+          const enAlpha = isPortugueseSide ? 0.15 : 0.82;
+          const ptAlpha = isPortugueseSide ? 0.95 : 0.18;
+          waveCtx.fillStyle = `rgba(242,236,224,${enAlpha})`;
+          waveCtx.fillRect(x, height / 2 - barHeight / 2, 2, barHeight);
+          waveCtx.fillStyle = `rgba(255,16,16,${ptAlpha})`;
+          waveCtx.fillRect(x + 3, height / 2 - (barHeight * 0.72) / 2, 3, barHeight * 0.72);
+        }
+        waveCtx.fillStyle = 'rgba(255,16,16,0.28)';
+        waveCtx.fillRect(splitX, 0, width - splitX, height);
+        waveCtx.fillStyle = 'rgba(255,255,255,0.95)';
+        waveCtx.fillRect(splitX - 1, 0, 2, height);
+        waveCtx.fillStyle = 'rgba(255,16,16,0.95)';
+        const duration = Number.isFinite(video.duration) && video.duration > 0 ? video.duration : 1;
+        waveCtx.fillRect((video.currentTime / duration) * width, 0, 2, height);
+        wavePhase += video.paused ? 0.018 : 0.09;
+        requestAnimationFrame(drawWave);
+      }
+
+      play.addEventListener('click', () => {
+        if (video.paused) {
+          playAll().catch(() => {
+            setPlaying(false);
+          });
+        } else {
+          pauseAll();
+        }
+      });
+
+      fader.addEventListener('input', applyFader);
+
+      stageFader.addEventListener('pointerdown', (event) => {
+        lastPointerStartAt = Date.now();
+        isDraggingFader = true;
+        stageFader.classList.add('is-dragging');
+        stageFader.setPointerCapture(event.pointerId);
+        setFaderFromClientX(event.clientX);
+        startFromStage();
+      });
+
+      stageFader.addEventListener('pointermove', (event) => {
+        if (!isDraggingFader) return;
+        setFaderFromClientX(event.clientX);
+      });
+
+      stageFader.addEventListener('pointerup', (event) => {
+        isDraggingFader = false;
+        stageFader.classList.remove('is-dragging');
+        if (stageFader.hasPointerCapture(event.pointerId)) {
+          stageFader.releasePointerCapture(event.pointerId);
+        }
+      });
+
+      stageFader.addEventListener('pointercancel', () => {
+        isDraggingFader = false;
+        stageFader.classList.remove('is-dragging');
+      });
+
+      stageFader.addEventListener('click', (event) => {
+        setFaderFromClientX(event.clientX);
+        startFromStage();
+      }, true);
+
+      stageFader.addEventListener('mousedown', (event) => {
+        if (Date.now() - lastPointerStartAt < 80) return;
+        isDraggingFader = true;
+        stageFader.classList.add('is-dragging');
+        setFaderFromClientX(event.clientX);
+        startFromStage();
+      });
+
+      document.addEventListener('mousemove', (event) => {
+        if (!isDraggingFader) return;
+        setFaderFromClientX(event.clientX);
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (!isDraggingFader) return;
+        isDraggingFader = false;
+        stageFader.classList.remove('is-dragging');
+      });
+
+      stageFader.addEventListener('touchstart', (event) => {
+        const touch = event.touches[0];
+        if (!touch) return;
+        isDraggingFader = true;
+        stageFader.classList.add('is-dragging');
+        setFaderFromClientX(touch.clientX);
+        startFromStage();
+      }, { passive: true });
+
+      stageFader.addEventListener('touchmove', (event) => {
+        if (!isDraggingFader) return;
+        const touch = event.touches[0];
+        if (touch) setFaderFromClientX(touch.clientX);
+      }, { passive: true });
+
+      stageFader.addEventListener('touchend', () => {
+        isDraggingFader = false;
+        stageFader.classList.remove('is-dragging');
+      });
+
+      stageFader.addEventListener('keydown', (event) => {
+        const current = Number(fader.value);
+        let next = current;
+        if (event.key === 'ArrowLeft') next = current - 5;
+        if (event.key === 'ArrowRight') next = current + 5;
+        if (event.key === 'Home') next = 0;
+        if (event.key === 'End') next = 100;
+        if (next !== current) {
+          event.preventDefault();
+          fader.value = String(Math.max(0, Math.min(100, next)));
+          applyFader();
+        }
+      });
+
+      scrub.addEventListener('input', () => {
+        isSeeking = true;
+        const duration = Number.isFinite(video.duration) ? video.duration : 0;
+        const nextTime = (Number(scrub.value) / 1000) * duration;
+        if (duration > 0) {
+          video.currentTime = nextTime;
+          colorVideo.currentTime = nextTime;
+          audio.currentTime = nextTime;
+          updateTime();
+        }
+      });
+
+      scrub.addEventListener('change', () => {
+        isSeeking = false;
+        colorVideo.currentTime = video.currentTime;
+        audio.currentTime = video.currentTime;
+      });
+
+      cards.forEach((card) => {
+        card.addEventListener('click', () => loadDemo(Number(card.dataset.demoIndex)));
+      });
+
+      video.addEventListener('loadedmetadata', updateTime);
+      video.addEventListener('timeupdate', () => {
+        if (Math.abs(colorVideo.currentTime - video.currentTime) > 0.22) {
+          colorVideo.currentTime = video.currentTime;
+        }
+        if (!video.paused && Math.abs(audio.currentTime - video.currentTime) > 0.22) {
+          audio.currentTime = video.currentTime;
+        }
+        updateTime();
+      });
+      video.addEventListener('pause', () => {
+        if (!colorVideo.paused) colorVideo.pause();
+        if (!audio.paused) audio.pause();
+        setPlaying(false);
+      });
+      video.addEventListener('ended', pauseAll);
+      audio.addEventListener('ended', pauseAll);
+
+      window.addEventListener('resize', resizeWave);
+      resizeWave();
+      loadDemo(0);
+      drawWave();
+    })();
   </script>
 
   <script src="assets/js/analytics-consent.js" defer></script>

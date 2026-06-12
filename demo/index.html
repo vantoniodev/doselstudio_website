@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>vox-humana | Dosel Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/player.css">
+</head>
+<body>
+  <div class="dosel-mark" aria-hidden="true">
+    <div class="dosel-mark-symbol">
+      <img src="assets/dosel-logo_v3.png" alt="">
+    </div>
+    <div class="dosel-mark-text">DOSEL<span>STUDIO</span></div>
+  </div>
+  <div class="geo-field" aria-hidden="true">
+    <div class="geo geo--ochre-square"></div>
+    <div class="geo geo--red-bar"></div>
+    <div class="geo geo--grey-diamond"></div>
+  </div>
+  <aside class="content-card" id="contentCard">
+    <button class="content-card-tab" id="contentCardTab" type="button" aria-label="Informações do conteúdo" aria-expanded="false">
+      <svg class="tab-icon" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <line x1="0" y1="5" x2="10" y2="5" stroke="currentColor" stroke-width="1.2"/>
+        <line x1="5" y1="0" x2="5" y2="10" stroke="currentColor" stroke-width="1.2"/>
+      </svg>
+      <span>INFO</span>
+    </button>
+    <div class="content-card-image-wrap">
+      <img class="content-card-img" id="contentCardImg" src="" alt="">
+      <div class="content-card-img-placeholder">
+        <div class="content-card-placeholder-icon"></div>
+      </div>
+    </div>
+    <div class="content-card-meta">
+      <p class="content-card-title" id="contentCardTitle">—</p>
+      <p class="content-card-author" id="contentCardAuthor"></p>
+      <p class="content-card-source" id="contentCardSource"></p>
+      <p class="content-card-desc" id="contentCardDesc"></p>
+      <p class="content-card-detail" id="contentCardLang">EN → PT-BR</p>
+      <p class="content-card-detail" id="contentCardDuration">—:——</p>
+      <label class="meta-load-btn" id="metaLoadLabel" title="Load JSON metadata">
+        ⊕ load meta
+        <input type="file" id="metaFileInput" accept=".json,application/json" style="display:none">
+      </label>
+      <label class="meta-load-btn" id="coverLoadLabel" title="Set cover image">
+        ⊕ set cover
+        <input type="file" id="contentCardFileInput" accept="image/*" style="display:none">
+      </label>
+    </div>
+  </aside>
+  <div class="draft-line draft-line--h" aria-hidden="true"></div>
+  <div class="draft-line draft-line--v" aria-hidden="true"></div>
+
+  <main class="page">
+    <!-- -------------------------------------------------------------------
+       Hero
+    -------------------------------------------------------------------- -->
+    <section class="hero" aria-label="vox-humana product statement">
+      <h1>vox-humana</h1>
+      <div class="hero-stamp" aria-hidden="true">ВОХ</div>
+      <p class="hero-sub">cultural localization engine</p>
+      <p class="hero-byline">by dosel studio</p>
+      <p class="tagline" aria-live="polite"><span data-tagline>not translated. localized.</span></p>
+    </section>
+
+    <div class="hairline" aria-hidden="true"></div>
+
+    <!-- -------------------------------------------------------------------
+       Unified Player Stage
+    -------------------------------------------------------------------- -->
+    <section class="player" aria-label="audio video a/b comparison player">
+      <span class="construct-label construct-label--left" aria-hidden="true">ЛОКАЛИЗАЦИЯ</span>
+      <span class="construct-label construct-label--right" aria-hidden="true">AUDIO PIPELINE</span>
+      <section class="catalog-rail" aria-label="available demonstrations">
+        <div class="catalog-rail-head">
+          <span class="catalog-kicker">catalog</span>
+          <span class="catalog-count" id="catalogCount">0 demos</span>
+        </div>
+        <div class="catalog-grid" id="catalogGrid" aria-live="polite"></div>
+      </section>
+      <section class="stage" id="stage" aria-label="unified media comparison stage">
+        <div class="track-loaders">
+          <div class="track-loader" data-track="en">
+            <span class="track-loader-label">ORIGINAL &middot; EN</span>
+            <span class="track-loader-badge"><span class="dot"></span><span data-badge-text>ORIGINAL &middot; EN &middot; EMPTY</span><button class="replace-track-button" type="button" data-replace>replace</button></span>
+            <div class="drop-zone" data-drop-zone>
+              <div class="drop-copy"><strong>drop original</strong>audio &middot; video</div>
+              <button class="browse-button" type="button" data-browse>browse</button>
+              <input class="file-input" type="file" data-input accept=".mp3,.wav,.ogg,.flac,.aac,.m4a,.opus,.webm,.aiff,.wma,.mp4,.mov,.mkv,.avi,.ogv,.m4v,.3gp,.ts,.mts,audio/*,video/*">
+            </div>
+            <span class="format-badge" data-format></span>
+            <p class="warning" data-warning></p>
+          </div>
+
+          <div class="track-loader" data-track="pt">
+            <span class="track-loader-label">LOCALIZED &middot; PT-BR</span>
+            <span class="track-loader-badge"><span class="dot"></span><span data-badge-text>LOCALIZED &middot; PT-BR &middot; EMPTY</span><button class="replace-track-button" type="button" data-replace>replace</button></span>
+            <div class="drop-zone" data-drop-zone>
+              <div class="drop-copy"><strong>drop localized</strong>audio &middot; video</div>
+              <button class="browse-button" type="button" data-browse>browse</button>
+              <input class="file-input" type="file" data-input accept=".mp3,.wav,.ogg,.flac,.aac,.m4a,.opus,.webm,.aiff,.wma,.mp4,.mov,.mkv,.avi,.ogv,.m4v,.3gp,.ts,.mts,audio/*,video/*">
+            </div>
+            <span class="format-badge" data-format></span>
+            <p class="warning" data-warning></p>
+          </div>
+        </div>
+
+        <video class="video-frame" id="sharedVideo" playsinline preload="metadata"></video>
+
+        <div class="wave-wrap" id="sharedWave">
+          <canvas class="wave-canvas" id="sharedCanvas"></canvas>
+          <div class="wave-label wave-label--en" aria-hidden="true">ORIGINAL &middot; EN</div>
+          <div class="wave-label wave-label--ptbr" aria-hidden="true">LOCALIZED &middot; PT-BR</div>
+          <div class="awaiting-label">load a track to begin</div>
+          <div class="loading-label">loading...</div>
+        </div>
+
+        <div class="stage-crossfader" data-stage-crossfader role="slider" tabindex="0" aria-label="in-video audio crossfader original to localized" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+          <div class="stage-crossfader-line" aria-hidden="true"></div>
+          <div class="stage-crossfader-knob" data-stage-crossfader-knob aria-hidden="true">Ⅱ</div>
+        </div>
+
+        <div class="captions"><span class="caption-pill" id="sharedCaption"></span></div>
+
+        <div class="playbar">
+          <div class="playbar-scrim" aria-hidden="true"></div>
+          <div class="playbar-controls">
+            <button class="play-button" type="button" id="sharedPlay" disabled aria-label="Play / Pause">
+              <svg class="play-icon" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path class="icon-play" d="M4 2.5 L13 8 L4 13.5 Z"></path>
+                <path class="icon-pause" d="M4 2h2.5v12H4zm5.5 0H12v12H9.5z"></path>
+              </svg>
+            </button>
+            <div class="volume-knob-wrap" id="volumeKnobWrap">
+              <svg class="volume-knob-svg" id="volumeKnobSvg" width="40" height="40" viewBox="0 0 96 96" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="150">
+                <defs>
+                  <linearGradient id="knobGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#F0EBE2"/>
+                    <stop offset="100%" stop-color="#C8C0B4"/>
+                  </linearGradient>
+                  <radialGradient id="knobSheen" cx="42%" cy="38%" r="55%">
+                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+                <g class="knob-ticks" id="knobTicks"></g>
+                <path class="knob-arc-track" id="knobArcTrack"></path>
+                <path class="knob-arc-fill" id="knobArcFill"></path>
+                <circle class="knob-body" cx="48" cy="48" r="32" fill="url(#knobGrad)"></circle>
+                <circle class="knob-sheen" cx="48" cy="48" r="32" fill="url(#knobSheen)" pointer-events="none"></circle>
+                <circle class="knob-inner-ring" cx="48" cy="48" r="26"></circle>
+                <line class="knob-indicator" id="knobIndicator" x1="48" y1="48" x2="48" y2="22"></line>
+              </svg>
+              <span class="volume-knob-db" id="volumeKnobDb">0.0 dB</span>
+              <div class="volume-popup" id="volumePopup" aria-hidden="true">
+                <div class="volume-popup-track" id="volumePopupTrack">
+                  <div class="volume-popup-fill" id="volumePopupFill"></div>
+                  <div class="volume-popup-thumb" id="volumePopupThumb"></div>
+                </div>
+                <span class="volume-popup-db" id="volumePopupDb">0.0 dB</span>
+              </div>
+            </div>
+            <input class="scrubber" type="range" min="0" max="1000" value="0" step="1" id="sharedScrubber" disabled aria-label="seek comparison">
+            <div class="playbar-timecode">
+              <span id="sharedTimecode">0:00</span>
+              <span class="timecode-sep">/</span>
+              <span id="sharedDuration">—:——</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- -----------------------------------------------------------------
+         Global Controls
+      ------------------------------------------------------------------ -->
+      <nav class="global-controls" aria-label="global playback controls">
+        <div class="controls-side controls-side--left">
+          <label class="toggle-label">
+            <input type="checkbox" data-sync checked>
+            sync
+          </label>
+
+          <button class="icon-button" type="button" data-cc aria-label="toggle captions" title="toggle captions (c)">cc</button>
+        </div>
+
+        <div class="crossfader" data-crossfader-shell>
+          <div class="fader-labels">
+            <span>EN</span>
+            <span>PT&middot;BR</span>
+          </div>
+          <div class="fader-track" data-crossfader role="slider" tabindex="0" aria-label="dj crossfader english to portuguese" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="fader-ticks" aria-hidden="true">
+              <span class="fader-tick" style="left: 0%"></span>
+              <span class="fader-tick" style="left: 25%"></span>
+              <span class="fader-tick" style="left: 50%"></span>
+              <span class="fader-tick" style="left: 75%"></span>
+              <span class="fader-tick" style="left: 100%"></span>
+            </div>
+            <div class="fader-center" aria-hidden="true"></div>
+            <div class="drag-cue" aria-hidden="true"></div>
+            <div class="fader-knob" data-fader-knob aria-hidden="true"></div>
+            <div class="fader-hint" id="faderHint" aria-hidden="true">arraste para comparar</div>
+          </div>
+          <div class="fader-caption">crossfader</div>
+        </div>
+
+        <div class="controls-side controls-side--right" aria-hidden="true"></div>
+      </nav>
+    </section>
+
+    <footer class="footer">vox-humana &middot; dosel studio &middot; mmxxv</footer>
+  </main>
+  <script src="js/catalog.js"></script>
+  <script src="js/player.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "featured": "virginia-woolf",
+  "items": [
+    {
+      "id": "virginia-woolf",
+      "title": "A Arte das Palavras",
+      "author": "Virginia Woolf",
+      "description": "Unica gravacao conhecida da voz de Virginia Woolf. Transmissao BBC Radio, 29 de abril de 1937. A palestra intitulada \"Craftsmanship\" foi parte da serie \"Words Fail Me\".",
+      "languages": "EN -> PT-BR",
+      "duration": "",
+      "cover": "assets_demo_online/cover.jpeg",
+      "metadata": "data/demos/virginia-woolf.json",
+      "active": true,
+      "featured": true
+    },
+    {
+      "id": "lex-fridman-intro",
+      "title": "Lex Fridman — Intro",
+      "author": "Lex Fridman",
+      "description": "Demonstração de localização e dublagem EN → PT-BR.",
+      "languages": "EN -> PT-BR",
+      "duration": "",
+      "cover": "media/lex-fridman-intro/cover.jpg",
+      "metadata": "data/demos/lex-fridman-intro.json",
+      "active": true,
+      "featured": false
+    },
+    {
+      "id": "steve-jobs-28-years",
+      "title": "Steve Jobs — 28 Years",
+      "author": "Steve Jobs, 28 anos, cofundador da Apple. Tom de quem pensa em voz alta, misturando experiência pessoal com visão de futuro. Fala em inglês americano coloquial, com pausas reflexivas e construções informais.",
+      "languages": "EN → PT-BR",
+      "duration": "01:27",
+      "cover": "media/steve-jobs-28-years/cover.jpg",
+      "metadata": "data/demos/steve-jobs-28-years.json"
+    }
+  ]
+}

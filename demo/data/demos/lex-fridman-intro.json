@@ -1,0 +1,33 @@
+{
+  "id": "lex-fridman-intro",
+  "title": "Lex Fridman — Intro",
+  "author": "Lex Fridman",
+  "description": "Demonstração de localização e dublagem EN → PT-BR.",
+  "lang_from": "EN",
+  "lang_to": "PT-BR",
+  "duration": "",
+  "cover": "media/lex-fridman-intro/cover.jpg",
+  "video": "media/lex-fridman-intro/video.mp4",
+  "tracks": {
+    "original": {
+      "label": "ORIGINAL · EN",
+      "language": "en",
+      "embedded_in_video": true
+    },
+    "localized": {
+      "label": "LOCALIZED · PT-BR",
+      "language": "PT-BR",
+      "src": "media/lex-fridman-intro/localized-ptbr.m4a"
+    }
+  },
+  "subtitles": {
+    "original": null,
+    "localized": null
+  },
+  "audio_processing": {
+    "normalized_offline": true,
+    "target_integrated_lufs": -10,
+    "target_true_peak_dbtp": -1,
+    "status": "offline-mastered-ffmpeg-loudnorm"
+  }
+}
