@@ -2401,8 +2401,8 @@
         applyFader();
       }
 
-      function startFromStage() {
-        if (!video.paused || playRequestPending) return;
+      function startFromStage(force = false) {
+        if (!video.paused || (playRequestPending && !force)) return;
         playRequestPending = true;
         playAll()
           .catch(() => {
@@ -2452,15 +2452,16 @@
 
       async function playAll() {
         const graphReady = ensureAudioGraph();
-        if (graphReady && audioGraph.ctx?.state === 'suspended') {
-          await audioGraph.ctx.resume();
-        }
+        const resumePromise = graphReady && audioGraph.ctx?.state === 'suspended'
+          ? audioGraph.ctx.resume().catch(() => null)
+          : Promise.resolve(audioGraph.ctx);
         syncLocalizedAudio(true);
         applyFader();
         const results = await Promise.allSettled([
           video.play(),
           audio.play()
         ]);
+        await resumePromise;
 
         const videoFailed = results[0]?.status === 'rejected';
         const audioFailed = results[1]?.status === 'rejected';
@@ -2667,6 +2668,10 @@
           event.preventDefault();
           suppressStageClickUntil = Date.now() + 320;
           pauseAll();
+        } else if (isTapOnKnob && video.paused) {
+          event.preventDefault();
+          suppressStageClickUntil = Date.now() + 320;
+          startFromStage(true);
         } else {
           ensureLocalizedPlayback();
         }
@@ -2709,6 +2714,7 @@
       stageFader.addEventListener('touchstart', (event) => {
         const touch = event.touches[0];
         if (!touch) return;
+        event.preventDefault();
         pointerStartX = touch.clientX;
         pointerStartY = touch.clientY;
         pointerStartedOnKnob = isKnobPoint(touch.clientX, touch.clientY);
@@ -2723,6 +2729,7 @@
 
       stageFader.addEventListener('touchmove', (event) => {
         if (!isDraggingFader) return;
+        event.preventDefault();
         const touch = event.touches[0];
         if (touch) {
           if (Math.hypot(touch.clientX - pointerStartX, touch.clientY - pointerStartY) > 8) {
@@ -2740,6 +2747,10 @@
           event.preventDefault();
           suppressStageClickUntil = Date.now() + 320;
           pauseAll();
+        } else if (isTapOnKnob && video.paused) {
+          event.preventDefault();
+          suppressStageClickUntil = Date.now() + 320;
+          startFromStage(true);
         } else {
           ensureLocalizedPlayback();
         }
